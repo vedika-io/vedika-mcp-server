@@ -1,0 +1,70 @@
+{
+  "name": "@vedika-io/mcp-server",
+  "version": "2.0.0",
+  "description": "MCP server for Vedika Astrology API — 36 tools across Vedic, Western, KP, Chinese, Tarot, I Ching, Human Design, Numerology, and Ayurvedic domains for autonomous AI agent use",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "vedika-mcp-server": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "astrology",
+    "vedic",
+    "western",
+    "kp",
+    "api",
+    "ai",
+    "ai-agents",
+    "claude",
+    "cursor",
+    "windsurf",
+    "birth-chart",
+    "kundli",
+    "horoscope",
+    "numerology",
+    "dasha",
+    "dosha",
+    "panchang",
+    "swiss-ephemeris",
+    "tarot",
+    "iching",
+    "chinese-zodiac",
+    "bazi",
+    "human-design",
+    "crystals",
+    "ayurvedic",
+    "lalkitab",
+    "mantra",
+    "matrimony"
+  ],
+  "author": "Vedika Intelligence <support@vedika.io>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vedika-io/vedika-mcp-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vedika-io/vedika-mcp-server/issues"
+  },
+  "homepage": "https://vedika.io",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}
