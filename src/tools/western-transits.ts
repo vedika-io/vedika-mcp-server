@@ -13,7 +13,7 @@ const ENDPOINTS: Record<string, string> = {
 export function registerWesternTransitsTool(server: McpServer, client: VedikaApiClient): void {
   server.tool(
     'vedika_western_transits',
-    'Western astrology current transits against a natal chart. Tropical zodiac (no ayanamsa). "chart" returns the full transit chart overlay. "positions" returns current planetary positions in tropical signs. "aspects" returns current transit aspects (conjunction, opposition, trine, square, sextile) to natal planets with orbs. Swiss Ephemeris computed. Cost: $0.064/call.',
+    'Western astrology current transits against a natal chart. Tropical zodiac (no ayanamsa). "chart" returns the full transit chart overlay. "positions" returns current planetary positions in tropical signs. "aspects" returns current transit aspects (conjunction, opposition, trine, square, sextile) to natal planets with orbs. Vedika Ephemeris computed. Cost: $0.064/call.',
     {
       type: z.enum(['chart', 'positions', 'aspects'])
         .default('chart')

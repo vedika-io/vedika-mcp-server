@@ -16,7 +16,7 @@ const ENDPOINTS: Record<string, string> = {
 export function registerBirthChartTool(server: McpServer, client: VedikaApiClient): void {
   server.tool(
     'vedika_birth_chart',
-    'Generate a Vedic birth chart (Kundli) with planetary positions, house cusps, ascendant, nakshatras, and dignities. All calculations use in-house Swiss Ephemeris (sidereal, Lahiri ayanamsa default). "kundli" returns the full chart. "planetary-positions" returns all 9 planets + Rahu/Ketu with sign, degree, house, nakshatra, retrograde status. "house-cusps" returns all 12 house boundaries. "ascendant" returns lagna details. Cost: $0.016-0.028/call.',
+    'Generate a Vedic birth chart (Kundli) with planetary positions, house cusps, ascendant, nakshatras, and dignities. All calculations use in-house Vedika Ephemeris (sidereal, Lahiri ayanamsa default). "kundli" returns the full chart. "planetary-positions" returns all 9 planets + Rahu/Ketu with sign, degree, house, nakshatra, retrograde status. "house-cusps" returns all 12 house boundaries. "ascendant" returns lagna details. Cost: $0.016-0.028/call.',
     {
       type: z.enum(['kundli', 'birth-chart', 'planetary-positions', 'house-cusps', 'ascendant', 'birth-details'])
         .default('kundli')

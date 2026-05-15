@@ -25,7 +25,7 @@ const CHART_ENDPOINTS: Record<string, string> = {
 export function registerDivisionalChartsTool(server: McpServer, client: VedikaApiClient): void {
   server.tool(
     'vedika_divisional_charts',
-    'Calculate Vedic divisional charts (Vargas). Each division reveals a specific life area: D2 Hora (wealth), D3 Drekkana (siblings), D4 Chaturthamsa (property), D7 Saptamsa (children), D9 Navamsa (marriage/dharma — most important after Rashi), D10 Dashamsa (career), D12 Dwadashamsa (parents), D16 Shodasamsa (vehicles), D20 Vimsamsa (spiritual), D24 Chaturvimsamsa (education), D27 Bhamsa (strength), D30 Trimsamsa (evils), D40 Khavedamsa (maternal), D45 Akshavedamsa (paternal), D60 Shashtiamsa (past-life karma). Swiss Ephemeris computed. Cost: $0.005/call.',
+    'Calculate Vedic divisional charts (Vargas). Each division reveals a specific life area: D2 Hora (wealth), D3 Drekkana (siblings), D4 Chaturthamsa (property), D7 Saptamsa (children), D9 Navamsa (marriage/dharma — most important after Rashi), D10 Dashamsa (career), D12 Dwadashamsa (parents), D16 Shodasamsa (vehicles), D20 Vimsamsa (spiritual), D24 Chaturvimsamsa (education), D27 Bhamsa (strength), D30 Trimsamsa (evils), D40 Khavedamsa (maternal), D45 Akshavedamsa (paternal), D60 Shashtiamsa (past-life karma). Vedika Ephemeris computed. Cost: $0.005/call.',
     {
       chart: z.enum(['D2', 'D3', 'D4', 'D7', 'D9', 'D10', 'D12', 'D16', 'D20', 'D24', 'D27', 'D30', 'D40', 'D45', 'D60'])
         .describe('Divisional chart. D9 (Navamsa) is the most important after the birth chart.'),

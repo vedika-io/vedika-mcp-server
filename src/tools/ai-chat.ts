@@ -16,7 +16,7 @@ const BirthDetailsInput = z.object({
 export function registerAiChatTool(server: McpServer, client: VedikaApiClient): void {
   server.tool(
     'vedika_ai_chat',
-    'Ask Vedika AI any astrology question with optional birth details. This is the flagship endpoint — runs the full pipeline: Swiss Ephemeris chart computation, 21-yoga detection, anti-hallucination validation, AI interpretation (30 languages). Supports Vedic (sidereal, nakshatras, dashas, yogas), Western (tropical, transits, progressions), and KP (sub-lord, significator) systems. Multi-turn conversations via conversationId. Can take 5-90 seconds depending on query complexity. Cost: token-based, typically $0.008-0.05/query.',
+    'Ask Vedika AI any astrology question with optional birth details. This is the flagship endpoint — uses proprietary chart computation, yoga detection, validated AI interpretation (30 languages). Supports Vedic (sidereal, nakshatras, dashas, yogas), Western (tropical, transits, progressions), and KP (sub-lord, significator) systems. Multi-turn conversations via conversationId. Can take 5-90 seconds depending on query complexity. Cost: token-based, typically $0.008-0.05/query.',
     {
       question: z.string().min(1).max(5000)
         .describe('Your astrology question in natural language. Can be in any of 30 supported languages.'),
