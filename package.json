@@ -1,7 +1,7 @@
 {
   "name": "@vedika-io/mcp-server",
-  "version": "2.0.0",
-  "description": "MCP server for Vedika Astrology API — 36 tools across Vedic, Western, KP, Chinese, Tarot, I Ching, Human Design, Numerology, and Ayurvedic domains for autonomous AI agent use",
+  "version": "2.0.1",
+  "description": "MCP server for Vedika Astrology API \u2014 36 tools across Vedic, Western, KP, Chinese, Tarot, I Ching, Human Design, Numerology, and Ayurvedic domains for autonomous AI agent use",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -66,5 +66,6 @@
     "@types/node": "^20.0.0",
     "tsx": "^4.19.0",
     "typescript": "^5.6.0"
-  }
+  },
+  "mcpName": "io.github.vedika-io/astrology"
 }
