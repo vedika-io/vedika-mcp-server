@@ -1,6 +1,6 @@
 # @vedika-io/mcp-server
 
-MCP server for the [Vedika Intelligence API](https://vedika.io) — 140+ astrology and divination endpoints across Vedic, Western, KP, Chinese, Tarot, I Ching, Human Design, Numerology, and Ayurvedic domains, exposed as 36 semantic tools for AI agents.
+MCP server for the [Vedika Intelligence API](https://vedika.io), exposing curated astrology and divination capabilities as semantic tools for AI agents.
 
 All calculations powered by Vedika AI. Zero external astrology API dependencies.
 
@@ -93,16 +93,16 @@ Add to `~/.windsurf/mcp_config.json`:
 
 ---
 
-## 36 Tools
+## Tools
 
-### Core (2 tools)
+### Core
 
 | Tool | Description | Cost |
 |------|-------------|------|
 | `vedika_ai_chat` | Natural language astrology Q&A with AI interpretation. Vedic/Western/KP systems. 30 languages. Multi-turn conversations. Anti-hallucination validated. | $0.008-0.05/query |
 | `vedika_conversation` | List, get, delete, or extend multi-turn conversations. | Free |
 
-### Vedic Computation (9 tools)
+### Vedic Computation
 
 | Tool | Types | Cost |
 |------|-------|------|
@@ -116,7 +116,7 @@ Add to `~/.windsurf/mcp_config.json`:
 | `vedika_predictions` | daily, weekly, monthly, quarterly, yearly | $0.020-0.088 |
 | `vedika_ashtakavarga` | planet (Bhinnashtakavarga), sarva (Sarvashtakavarga) | $0.025 |
 
-### Western Astrology (4 tools)
+### Western Astrology
 
 | Tool | Types | Cost |
 |------|-------|------|
@@ -125,7 +125,7 @@ Add to `~/.windsurf/mcp_config.json`:
 | `vedika_western_solar_return` | chart, positions, aspects | $0.120 |
 | `vedika_western_relationship` | synastry, synastry-aspects, composite, composite-aspects | $0.148 |
 
-### Cross-System (3 tools)
+### Cross-System
 
 | Tool | Types | Cost |
 |------|-------|------|
@@ -133,14 +133,14 @@ Add to `~/.windsurf/mcp_config.json`:
 | `vedika_numerology` | life-path, destiny, personality, soul-urge, personal-year, complete, compatibility | $0.003-0.010 |
 | `vedika_varshaphal` | Vedic annual solar return (Tajaka system) | $0.006 |
 
-### Supplementary (2 tools)
+### Supplementary
 
 | Tool | Types | Cost |
 |------|-------|------|
 | `vedika_strength` | chandra-bala, tara-bala, upagraha, planet-relationship, shadbala | $0.020 |
 | `vedika_calendar` | ritu, solstice, anandadi-yoga, auspicious-yoga, auspicious-period, inauspicious-period, gowri-nalla-neram, disha-shool, planet-transit, chandrashtama, chandrashtama-periods | $0.016-0.020 |
 
-### Tarot & Divination (3 tools)
+### Tarot & Divination
 
 | Tool | Description | Cost |
 |------|-------------|------|
@@ -148,21 +148,21 @@ Add to `~/.windsurf/mcp_config.json`:
 | `vedika_tarot_daily` | Card of the day with meanings, keywords, and daily guidance. Cached per day. | $0.008 |
 | `vedika_iching_cast` | Cast an I Ching hexagram (yarrow or coin method). Primary hexagram + changing lines + transformed hexagram. | $0.012 |
 
-### Chinese Astrology (2 tools)
+### Chinese Astrology
 
 | Tool | Description | Cost |
 |------|-------------|------|
 | `vedika_chinese_zodiac` | Chinese zodiac animal, element, yin/yang, lucky numbers/colors, compatible/incompatible animals. Accounts for Chinese New Year dates. | $0.003 |
 | `vedika_chinese_bazi` | Ba Zi Four Pillars of Destiny: Year/Month/Day/Hour pillars, Day Master, 10-year Luck Pillars, Five Element balance. | $0.028 |
 
-### Alternative Systems (2 tools)
+### Alternative Systems
 
 | Tool | Description | Cost |
 |------|-------------|------|
 | `vedika_human_design_chart` | Human Design BodyGraph: Type, Strategy, Authority, Profile, defined/undefined Centers, Channels, Gates. | $0.040 |
 | `vedika_crystals_recommend` | Crystal and gemstone recommendations by zodiac sign, planet, or need. Vedic ratna-shastra + modern crystal healing. | $0.012 |
 
-### Vedic Extended (4 tools)
+### Vedic Extended
 
 | Tool | Description | Cost |
 |------|-------------|------|
@@ -171,21 +171,21 @@ Add to `~/.windsurf/mcp_config.json`:
 | `vedika_lalkitab_remedies` | Lal Kitab remedies for afflicted planets. Unique totkas (practical remedies) distinct from classical BPHS. Optional debt (rina) analysis. | $0.020 |
 | `vedika_spiritual_mantra` | Personalized mantra recommendations from classical texts. Sanskrit + IAST transliteration, japa count, muhurta, mala material. | $0.016 |
 
-### Spiritual & Wellness (2 tools)
+### Spiritual & Wellness
 
 | Tool | Description | Cost |
 |------|-------------|------|
 | `vedika_spiritual_deity` | Ishta Devata (personal deity) from Atmakaraka in Navamsa. Also Dharma, Palana, and Guru Devata. Per BPHS Ch.33. | $0.020 |
 | `vedika_health_ayurvedic` | Ayurvedic Prakriti (constitution) analysis from birth chart. Vata/Pitta/Kapha balance, diet, herbs, seasonal recommendations. | $0.024 |
 
-### Bundles (2 tools)
+### Bundles
 
 | Tool | Description | Cost |
 |------|-------------|------|
 | `vedika_daily_bundle` | All daily content in one call: horoscope + panchang + tarot card + lucky numbers + transits. Saves cost vs individual calls. | $0.040 |
 | `vedika_numerology_complete` | Full numerology report: Life Path, Destiny, Soul Urge, Personality, Maturity, Pinnacles, Challenges, Karmic Debt/Lessons. Pythagorean or Chaldean. | $0.010 |
 
-### Utility (1 tool)
+### Utility
 
 | Tool | Description | Cost |
 |------|-------------|------|
