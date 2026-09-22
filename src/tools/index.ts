@@ -41,11 +41,11 @@ import { registerDashaAshtottariTool } from './dasha-ashtottari.js';
 import { registerLalkitabRemediesTool } from './lalkitab-remedies.js';
 
 export function registerAllTools(server: McpServer, client: VedikaApiClient): void {
-  // Core (2 tools)
+  // Core
   registerAiChatTool(server, client);
   registerConversationTool(server, client);
 
-  // Vedic Computation (9 tools)
+  // Vedic Computation
   registerBirthChartTool(server, client);
   registerDashaTool(server, client);
   registerDoshasTool(server, client);
@@ -56,50 +56,50 @@ export function registerAllTools(server: McpServer, client: VedikaApiClient): vo
   registerPredictionsTool(server, client);
   registerAshtakavargaTool(server, client);
 
-  // Western (4 tools)
+  // Western
   registerWesternTransitsTool(server, client);
   registerWesternProgressionsTool(server, client);
   registerWesternSolarReturnTool(server, client);
   registerWesternRelationshipTool(server, client);
 
-  // Cross-System (3 tools)
+  // Cross-System
   registerHoroscopeTool(server, client);
   registerNumerologyTool(server, client);
   registerVarshaphalTool(server, client);
 
-  // Supplementary (2 tools)
+  // Supplementary
   registerStrengthTool(server, client);
   registerCalendarTool(server, client);
 
-  // Utility (1 tool)
+  // Utility
   registerUsageTool(server, client);
 
-  // --- Project Dominion: New Domains (15 tools) ---
+  // Additional domains
 
-  // Tarot & Divination (3 tools)
+  // Tarot & Divination
   registerTarotDrawTool(server, client);
   registerTarotDailyTool(server, client);
   registerIChingTool(server, client);
 
-  // Chinese Astrology (2 tools)
+  // Chinese Astrology
   registerChineseZodiacTool(server, client);
   registerChineseBaziTool(server, client);
 
-  // Alternative Systems (2 tools)
+  // Alternative Systems
   registerHumanDesignTool(server, client);
   registerCrystalsTool(server, client);
 
-  // Vedic Extended (4 tools)
+  // Vedic Extended
   registerMatrimonyMatchTool(server, client);
   registerDashaAshtottariTool(server, client);
   registerLalkitabRemediesTool(server, client);
   registerSpiritualMantraTool(server, client);
 
-  // Spiritual & Wellness (2 tools)
+  // Spiritual & Wellness
   registerSpiritualDeityTool(server, client);
   registerHealthAyurvedicTool(server, client);
 
-  // Bundles (2 tools)
+  // Bundles
   registerDailyBundleTool(server, client);
   registerNumerologyCompleteTool(server, client);
 }
