@@ -8,33 +8,35 @@ export class VedikaApiError extends Error {
   }
 
   private static buildMessage(status: number, body: unknown): string {
-    const detail = typeof body === 'object' && body !== null && 'message' in body
-      ? (body as { message: string }).message
-      : JSON.stringify(body);
-
+    // Upstream text can contain credentials or internal paths. Only known
+    // categories and bounded numeric hints are safe to return to a model.
+    const fields = typeof body === 'object' && body !== null
+      ? body as Record<string, unknown> : {};
     switch (status) {
       case 400:
-        return `Bad Request: ${detail}`;
+      case 422:
+        return 'Invalid request. Check the tool input against its schema.';
       case 401:
-        return 'Invalid API key. Get one at https://vedika.io/pricing — format: vk_live_*';
-      case 402: {
-        const bal = typeof body === 'object' && body !== null && 'walletBalance' in body
-          ? ` ($${((body as { walletBalance: number }).walletBalance / 100).toFixed(2)} remaining)`
-          : '';
-        return `Insufficient wallet balance${bal}. Add funds at https://vedika.io/dashboard`;
-      }
+        return 'Invalid API key. Check your Vedika API key configuration.';
+      case 402:
+        return fields.code === 'SUBSCRIPTION_EXPIRED'
+          ? 'Subscription expired. Renew at https://vedika.io/dashboard'
+          : 'Payment required. Check your wallet and subscription at https://vedika.io/dashboard';
       case 403:
-        return 'Subscription inactive or endpoint not included in your plan. Plans start at $12/mo: https://vedika.io/pricing';
+        return 'Access denied. Check your subscription and endpoint access.';
       case 404:
-        return `Endpoint not found: ${detail}`;
+        return 'Endpoint not found. Check the tool and API configuration.';
       case 429: {
-        const info = typeof body === 'object' && body !== null && 'retryAfter' in body
-          ? ` Retry after ${(body as { retryAfter: number }).retryAfter}s.`
-          : '';
-        return `Rate limited.${info} Upgrade your plan for higher limits: https://vedika.io/pricing`;
+        const seconds = fields.retryAfter;
+        const hint = typeof seconds === 'number' && Number.isFinite(seconds)
+          && seconds >= 0 && seconds <= 86400
+          ? ` Retry after ${seconds}s.` : '';
+        return `Rate limited.${hint}`;
       }
       default:
-        return `Vedika API error (${status}): ${detail}`;
+        return Number.isInteger(status) && status >= 100 && status <= 599
+          ? `Vedika API error (${status}). Try again later.`
+          : 'Vedika API request failed. Try again later.';
     }
   }
 

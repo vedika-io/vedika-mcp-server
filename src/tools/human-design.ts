@@ -27,7 +27,7 @@ export function registerHumanDesignTool(server: McpServer, client: VedikaApiClie
         timezone: args.timezone,
       };
       if (args.name) body.name = args.name;
-      const result = await client.post('/v2/humandesign/chart', body);
+      const result = await client.post('/v2/human-design/chart', body);
       return { content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }] };
     })
   );

@@ -4,10 +4,11 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { VedikaApiClient } from './client.js';
 import { registerAllTools } from './tools/index.js';
+import { MCP_SERVER_VERSION } from './version.js';
 
 const server = new McpServer({
   name: 'vedika-mcp-server',
-  version: '2.0.0',
+  version: MCP_SERVER_VERSION,
 });
 
 try {

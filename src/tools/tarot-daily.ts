@@ -17,7 +17,7 @@ export function registerTarotDailyTool(server: McpServer, client: VedikaApiClien
       const params: Record<string, string> = {};
       if (args.date) params.date = args.date;
       if (args.deck) params.deck = args.deck;
-      const result = await client.get('/v2/divination/tarot/daily', params);
+      const result = await client.get('/v2/tarot/card-of-the-day', params);
       return { content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }] };
     })
   );

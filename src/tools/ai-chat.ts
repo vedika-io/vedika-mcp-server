@@ -16,7 +16,7 @@ const BirthDetailsInput = z.object({
 export function registerAiChatTool(server: McpServer, client: VedikaApiClient): void {
   server.tool(
     'vedika_ai_chat',
-    'Ask Vedika AI any astrology question with optional birth details. This is the flagship endpoint — uses proprietary chart computation, yoga detection, validated AI interpretation (30 languages). Supports Vedic (sidereal, nakshatras, dashas, yogas), Western (tropical, transits, progressions), and KP (sub-lord, significator) systems. Multi-turn conversations via conversationId. Can take 5-90 seconds depending on query complexity. Cost: token-based, typically $0.008-0.05/query.',
+    'Ask Vedika AI any astrology question with optional birth details. This is the flagship endpoint — AI-powered interpretation with precision-validated chart computation (30 languages). Supports Vedic (sidereal, nakshatras, dashas, yogas), Western (tropical, transits, progressions), and KP (sub-lord, significator) systems. Multi-turn conversations via conversationId. Can take 5-90 seconds depending on query complexity. Cost: token-based, typically $0.008-0.05/query.',
     {
       question: z.string().min(1).max(5000)
         .describe('Your astrology question in natural language. Can be in any of 30 supported languages.'),
@@ -29,8 +29,8 @@ export function registerAiChatTool(server: McpServer, client: VedikaApiClient): 
         .describe('Response language code: en, hi, ta, te, kn, ml, mr, gu, bn, pa, od, etc. (30 languages). Default: en.'),
       conversationId: z.string().optional()
         .describe('ID from a previous response to continue a multi-turn conversation with context.'),
-      speed: z.enum(['standard', 'fast']).optional()
-        .describe('standard=best quality (default). fast=quicker but costs more, uses smaller model.'),
+      speed: z.enum(['standard', 'fast', 'eco']).optional()
+        .describe('Delivery tier. standard=best quality (default). fast=quicker, costs more. eco=lower-cost engine; an eco call on a deploy without the Eco engine fails closed with a masked 503 ECO_UNAVAILABLE and is never charged.'),
       includeRemedies: z.boolean().optional()
         .describe('Include BPHS-based remedies (gemstone, mantra, donation) for weak planets.'),
       category: z.enum(['kundali', 'dasha', 'transit', 'dosha', 'remedies', 'compatibility', 'career', 'health', 'general']).optional()

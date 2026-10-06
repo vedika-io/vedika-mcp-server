@@ -5,7 +5,7 @@ import { BirthDetailsSchema, extractBirthDetails } from '../schemas.js';
 import { safeTool } from '../tool-wrapper.js';
 
 const CHART_ENDPOINTS: Record<string, string> = {
-  'D2': '/v2/astrology/hora',
+  'D2': '/v2/astrology/hora-chart',
   'D3': '/v2/astrology/drekkana',
   'D4': '/v2/astrology/chaturthamsa',
   'D7': '/v2/astrology/saptamsa',

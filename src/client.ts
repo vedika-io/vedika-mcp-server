@@ -1,4 +1,32 @@
 import { VedikaApiError } from './errors.js';
+import { SafeToolInputError } from './tool-wrapper.js';
+import { MCP_SERVER_USER_AGENT } from './version.js';
+
+const PUBLIC_API_ORIGIN = 'https://api.vedika.io';
+
+export function resolveVedikaBaseUrl(configured: string | undefined): string {
+  const raw = configured?.trim() || PUBLIC_API_ORIGIN;
+  let url: URL;
+
+  try {
+    url = new URL(raw);
+  } catch {
+    throw new Error(`VEDIKA_BASE_URL must be exactly ${PUBLIC_API_ORIGIN}`);
+  }
+
+  if (
+    url.origin !== PUBLIC_API_ORIGIN
+    || url.pathname !== '/'
+    || url.search !== ''
+    || url.hash !== ''
+    || url.username !== ''
+    || url.password !== ''
+  ) {
+    throw new Error(`VEDIKA_BASE_URL must be exactly ${PUBLIC_API_ORIGIN}`);
+  }
+
+  return PUBLIC_API_ORIGIN;
+}
 
 export class VedikaApiClient {
   private readonly apiKey: string;
@@ -14,11 +42,16 @@ export class VedikaApiClient {
       );
     }
     this.apiKey = apiKey;
-    this.baseUrl = (process.env['VEDIKA_BASE_URL'] || 'https://api.vedika.io').replace(/\/$/, '');
+    this.baseUrl = resolveVedikaBaseUrl(process.env['VEDIKA_BASE_URL']);
   }
 
-  async post<T = unknown>(path: string, body: Record<string, unknown>, timeoutMs = 30_000): Promise<T> {
-    return this.requestWithRetry<T>('POST', path, { body, timeoutMs });
+  async post<T = unknown>(path: string, body: Record<string, unknown>, timeoutMs = 30_000, idempotencyKey?: string): Promise<T> {
+    const batch = path === '/v2/vastu/assessments/batch' || path === '/v2/astrology/vastu/assessments/batch';
+    if ((batch || idempotencyKey !== undefined) &&
+        (!idempotencyKey || idempotencyKey !== idempotencyKey.trim() || !/^[\x20-\x7e]{1,200}$/.test(idempotencyKey))) {
+      throw new SafeToolInputError('Send an Idempotency-Key of 1 to 200 printable ASCII characters without surrounding spaces and retain it for retries');
+    }
+    return this.requestWithRetry<T>('POST', path, { body, timeoutMs, idempotencyKey });
   }
 
   async get<T = unknown>(path: string, params?: Record<string, string>, timeoutMs = 15_000): Promise<T> {
@@ -32,14 +65,15 @@ export class VedikaApiClient {
   private async requestWithRetry<T>(
     method: string,
     path: string,
-    opts: { body?: Record<string, unknown>; params?: Record<string, string>; timeoutMs: number },
+    opts: { body?: Record<string, unknown>; params?: Record<string, string>; timeoutMs: number; idempotencyKey?: string },
   ): Promise<T> {
     const maxRetries = 1;
+    const requestId = opts.idempotencyKey ?? crypto.randomUUID();
     let lastError: unknown;
 
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
-        return await this.doRequest<T>(method, path, opts);
+        return await this.doRequest<T>(method, path, opts, requestId);
       } catch (err) {
         lastError = err;
         if (err instanceof VedikaApiError) {
@@ -61,7 +95,8 @@ export class VedikaApiClient {
   private async doRequest<T>(
     method: string,
     path: string,
-    opts: { body?: Record<string, unknown>; params?: Record<string, string>; timeoutMs: number },
+    opts: { body?: Record<string, unknown>; params?: Record<string, string>; timeoutMs: number; idempotencyKey?: string },
+    requestId: string,
   ): Promise<T> {
     let url: string;
     if (method === 'GET' && opts.params) {
@@ -80,7 +115,8 @@ export class VedikaApiClient {
     try {
       const fetchOpts: RequestInit = {
         method,
-        headers: this.headers(),
+        headers: { ...this.headers(requestId), ...(opts.idempotencyKey === undefined ? {} : { 'Idempotency-Key': opts.idempotencyKey }) },
+        redirect: 'manual',
         signal: controller.signal,
       };
       if (opts.body) fetchOpts.body = JSON.stringify(opts.body);
@@ -92,7 +128,9 @@ export class VedikaApiClient {
     } catch (err) {
       if (err instanceof VedikaApiError) throw err;
       if (err instanceof Error && err.name === 'AbortError') {
-        throw new Error(`Request timed out after ${opts.timeoutMs / 1000}s — ${path}`);
+        const timeoutError = new Error(`Request timed out after ${opts.timeoutMs / 1000}s — ${path}`);
+        timeoutError.name = 'AbortError';
+        throw timeoutError;
       }
       throw err;
     } finally {
@@ -100,12 +138,13 @@ export class VedikaApiClient {
     }
   }
 
-  private headers(): Record<string, string> {
+  private headers(requestId: string): Record<string, string> {
     return {
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${this.apiKey}`,
       'x-api-key': this.apiKey,
-      'x-request-id': crypto.randomUUID(),
-      'User-Agent': 'vedika-mcp-server/2.0.0',
+      'x-request-id': requestId,
+      'User-Agent': MCP_SERVER_USER_AGENT,
     };
   }
 }

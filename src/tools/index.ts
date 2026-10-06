@@ -22,8 +22,10 @@ import { registerVarshaphalTool } from './varshaphal.js';
 import { registerStrengthTool } from './strength.js';
 import { registerCalendarTool } from './calendar.js';
 import { registerUsageTool } from './usage.js';
+import { registerVastuJobTools } from './vastu-jobs.js';
+import { registerVastuTools } from './vastu.js';
 
-// Project Dominion: New domain tools
+// Additional domain tools
 import { registerTarotDrawTool } from './tarot-draw.js';
 import { registerTarotDailyTool } from './tarot-daily.js';
 import { registerChineseZodiacTool } from './chinese-zodiac.js';
@@ -41,11 +43,11 @@ import { registerDashaAshtottariTool } from './dasha-ashtottari.js';
 import { registerLalkitabRemediesTool } from './lalkitab-remedies.js';
 
 export function registerAllTools(server: McpServer, client: VedikaApiClient): void {
-  // Core
+  // Core (2 tools)
   registerAiChatTool(server, client);
   registerConversationTool(server, client);
 
-  // Vedic Computation
+  // Vedic Computation (9 tools)
   registerBirthChartTool(server, client);
   registerDashaTool(server, client);
   registerDoshasTool(server, client);
@@ -56,50 +58,54 @@ export function registerAllTools(server: McpServer, client: VedikaApiClient): vo
   registerPredictionsTool(server, client);
   registerAshtakavargaTool(server, client);
 
-  // Western
+  // Western (4 tools)
   registerWesternTransitsTool(server, client);
   registerWesternProgressionsTool(server, client);
   registerWesternSolarReturnTool(server, client);
   registerWesternRelationshipTool(server, client);
 
-  // Cross-System
+  // Cross-System (3 tools)
   registerHoroscopeTool(server, client);
   registerNumerologyTool(server, client);
   registerVarshaphalTool(server, client);
 
-  // Supplementary
+  // Supplementary (2 tools)
   registerStrengthTool(server, client);
   registerCalendarTool(server, client);
 
-  // Utility
+  // Utility (1 tool)
   registerUsageTool(server, client);
 
-  // Additional domains
+  // Vastu (7 tools) — building/plot Vastu Shastra, never a birth chart
+  registerVastuTools(server, client);
+  registerVastuJobTools(server, client);
 
-  // Tarot & Divination
+  // --- Additional domains (15 tools) ---
+
+  // Tarot & Divination (3 tools)
   registerTarotDrawTool(server, client);
   registerTarotDailyTool(server, client);
   registerIChingTool(server, client);
 
-  // Chinese Astrology
+  // Chinese Astrology (2 tools)
   registerChineseZodiacTool(server, client);
   registerChineseBaziTool(server, client);
 
-  // Alternative Systems
+  // Alternative Systems (2 tools)
   registerHumanDesignTool(server, client);
   registerCrystalsTool(server, client);
 
-  // Vedic Extended
+  // Vedic Extended (4 tools)
   registerMatrimonyMatchTool(server, client);
   registerDashaAshtottariTool(server, client);
   registerLalkitabRemediesTool(server, client);
   registerSpiritualMantraTool(server, client);
 
-  // Spiritual & Wellness
+  // Spiritual & Wellness (2 tools)
   registerSpiritualDeityTool(server, client);
   registerHealthAyurvedicTool(server, client);
 
-  // Bundles
+  // Bundles (2 tools)
   registerDailyBundleTool(server, client);
   registerNumerologyCompleteTool(server, client);
 }
