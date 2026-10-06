@@ -1,6 +1,6 @@
 # @vedika-io/mcp-server
 
-MCP server for the [Vedika Intelligence API](https://vedika.io) — 140+ astrology and divination endpoints across Vedic, Western, KP, Chinese, Tarot, I Ching, Human Design, Numerology, and Ayurvedic domains, exposed as 36 semantic tools for AI agents.
+MCP server for the [Vedika Intelligence API](https://vedika.io) — astrology, divination and Vastu capabilities across Vedic, Western, KP, Chinese, Tarot, I Ching, Human Design, Numerology, and Ayurvedic domains, exposed as semantic tools for AI agents.
 
 All calculations powered by Vedika AI. Zero external astrology API dependencies.
 
@@ -107,20 +107,21 @@ Add to `~/.windsurf/mcp_config.json`:
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `VEDIKA_API_KEY` | Yes | — | Your API key (format: `vk_live_*`) |
+| `VEDIKA_API_KEY` | Yes | — | Your API key (format: `vk_live_*`). Sent as `Authorization: Bearer` and `x-api-key`. |
+| `VEDIKA_BASE_URL` | No | `https://api.vedika.io` | Only `https://api.vedika.io` and the free sandbox `https://api.vedika.io/sandbox` are accepted. Any other value stops the server at startup, so a key cannot be routed to another host. |
 
 ---
 
-## 36 Tools
+## Tools
 
-### Core (2 tools)
+### Core
 
 | Tool | Description | Cost |
 |------|-------------|------|
 | `vedika_ai_chat` | Natural language astrology Q&A with AI interpretation. Vedic/Western/KP systems. 30 languages. Multi-turn conversations. Anti-hallucination validated. | $0.008-0.05/query |
 | `vedika_conversation` | List, get, delete, or extend multi-turn conversations. | Free |
 
-### Vedic Computation (9 tools)
+### Vedic Computation
 
 | Tool | Types | Cost |
 |------|-------|------|
@@ -134,7 +135,7 @@ Add to `~/.windsurf/mcp_config.json`:
 | `vedika_predictions` | daily, weekly, monthly, quarterly, yearly | $0.020-0.088 |
 | `vedika_ashtakavarga` | planet (Bhinnashtakavarga), sarva (Sarvashtakavarga) | $0.025 |
 
-### Western Astrology (4 tools)
+### Western Astrology
 
 | Tool | Types | Cost |
 |------|-------|------|
@@ -151,14 +152,14 @@ Add to `~/.windsurf/mcp_config.json`:
 | `vedika_numerology` | life-path, destiny, personality, soul-urge, personal-year, complete, compatibility | $0.003-0.010 |
 | `vedika_varshaphal` | Vedic annual solar return (Tajaka system) | $0.006 |
 
-### Supplementary (2 tools)
+### Supplementary
 
 | Tool | Types | Cost |
 |------|-------|------|
 | `vedika_strength` | chandra-bala, tara-bala, upagraha, planet-relationship, shadbala | $0.020 |
 | `vedika_calendar` | ritu, solstice, anandadi-yoga, auspicious-yoga, auspicious-period, inauspicious-period, gowri-nalla-neram, disha-shool, planet-transit, chandrashtama, chandrashtama-periods | $0.016-0.020 |
 
-### Tarot & Divination (3 tools)
+### Tarot & Divination
 
 | Tool | Description | Cost |
 |------|-------------|------|
@@ -166,48 +167,61 @@ Add to `~/.windsurf/mcp_config.json`:
 | `vedika_tarot_daily` | Card of the day with meanings, keywords, and daily guidance. Cached per day. | $0.008 |
 | `vedika_iching_cast` | Cast an I Ching hexagram (yarrow or coin method). Primary hexagram + changing lines + transformed hexagram. | $0.012 |
 
-### Chinese Astrology (2 tools)
+### Chinese Astrology
 
 | Tool | Description | Cost |
 |------|-------------|------|
 | `vedika_chinese_zodiac` | Chinese zodiac animal, element, yin/yang, lucky numbers/colors, compatible/incompatible animals. Accounts for Chinese New Year dates. | $0.003 |
 | `vedika_chinese_bazi` | Basic Ba Zi chart from a timezone-free datetime: Year/Month/Day/Hour pillars, Day Master, dominant element, and Five Element balance. Timezone-bearing input is held while accepted civil, zoned, or solar-time semantics remain unresolved. | Verify current API pricing |
 
-### Alternative Systems (2 tools)
+### Alternative Systems
 
 | Tool | Description | Cost |
 |------|-------------|------|
 | `vedika_human_design_chart` | Human Design BodyGraph: Type, Strategy, Authority, Profile, defined/undefined Centers, Channels, Gates. | $0.040 |
 | `vedika_crystals_recommend` | Crystal and gemstone recommendations by zodiac sign, planet, or need. Vedic ratna-shastra + modern crystal healing. | $0.012 |
 
-### Vedic Extended (4 tools)
+### Vedic Extended
 
 | Tool | Description | Cost |
 |------|-------------|------|
-| `vedika_matrimony_match` | Comprehensive Kundali matching with Mangal/Nadi/Bhakoot dosha cancellation analysis. North + South Indian systems. | $0.056 |
+| `vedika_matrimony_match` | Kundali matching: 36-point Ashtakoota, Dashakoot summary, dosha cancellations and overall verdict. `southIndian: true` for Porutham. | Verify current API pricing |
 | `vedika_dasha_ashtottari` | Ashtottari 108-year dasha cycle (alternative to Vimshottari). 8 planets, Mahadasha/Antardasha/Pratyantardasha depth. | $0.020 |
 | `vedika_lalkitab_remedies` | Lal Kitab remedies for afflicted planets. Unique totkas (practical remedies) distinct from classical BPHS. Optional debt (rina) analysis. | $0.020 |
 | `vedika_spiritual_mantra` | Personalized mantra recommendations from classical texts. Sanskrit + IAST transliteration, japa count, muhurta, mala material. | $0.016 |
 
-### Spiritual & Wellness (2 tools)
+### Spiritual & Wellness
 
 | Tool | Description | Cost |
 |------|-------------|------|
 | `vedika_spiritual_deity` | Ishta Devata (personal deity) from Atmakaraka in Navamsa. Also Dharma, Palana, and Guru Devata. Per BPHS Ch.33. | $0.020 |
 | `vedika_health_ayurvedic` | Ayurvedic Prakriti (constitution) analysis from birth chart. Vata/Pitta/Kapha balance, diet, herbs, seasonal recommendations. | $0.024 |
 
-### Bundles (2 tools)
+### Bundles
 
 | Tool | Description | Cost |
 |------|-------------|------|
-| `vedika_daily_bundle` | All daily content in one call: horoscope + panchang + tarot card + lucky numbers + transits. Saves cost vs individual calls. | $0.040 |
+| `vedika_daily_bundle` | The day's general content in one call: tarot card, angel number, crystal, mantra, moon phase, rune and I Ching. Not a per-sign horoscope. | Verify current API pricing |
 | `vedika_numerology_complete` | Full numerology report: Life Path, Destiny, Soul Urge, Personality, Maturity, Pinnacles, Challenges, Karmic Debt/Lessons. Pythagorean or Chaldean. | $0.010 |
 
-### Utility (1 tool)
+### Utility
 
 | Tool | Description | Cost |
 |------|-------------|------|
 | `vedika_usage` | Check wallet balance, usage history, summary, model breakdown | Free |
+
+### Vastu
+
+| Tool | Description |
+|------|-------------|
+| `vastu_reference` | Static Vastu reference tables (mandala grids, directions, defects, remedies, colours, materials, gate obstructions) |
+| `vastu_audit_floor_plan` | Audit a room list against the compass zones it occupies |
+| `vastu_room_placement` | Placement guidance for one room type in one zone |
+| `vastu_mandala_project` | Project a Vastu Purusha Mandala grid onto a plot polygon |
+| `vastu_generate_plan` | Generate a Vastu-compliant plan from a plot and room programme |
+| `vastu_declination` | Coarse magnetic-declination reference estimate |
+| `vastu_operation` | Call any other Vastu operation by path suffix. `assessments/batch` requires a retained `idempotencyKey` |
+| `vastu_job_submit`, `vastu_job_status`, `vastu_job_results`, `vastu_job_cancel`, `vastu_job_artifact` | Bulk Vastu jobs and artifacts (see below) |
 
 ---
 
@@ -308,8 +322,7 @@ Accepts both English and Hindi (Roman transliteration):
 ```json
 {
   "bride": { "datetime": "1994-07-22T08:15:00", "latitude": 19.07, "longitude": 72.87, "timezone": "+05:30", "gender": "female" },
-  "groom": { "datetime": "1992-03-15T10:30:00", "latitude": 28.61, "longitude": 77.20, "timezone": "+05:30", "gender": "male" },
-  "includeRemedies": true
+  "groom": { "datetime": "1992-03-15T10:30:00", "latitude": 28.61, "longitude": 77.20, "timezone": "+05:30", "gender": "male" }
 }
 ```
 
@@ -494,10 +507,11 @@ All errors are returned as MCP tool errors with descriptive messages:
 |--------|---------|-----------------|
 | 400 | Invalid input | `Bad Request: datetime is required` |
 | 401 | Bad API key | `Invalid API key. Get one at https://vedika.io/pricing -- format: vk_live_*` |
-| 402 | No balance | `Insufficient wallet balance ($2.50 remaining). Add funds at https://vedika.io/dashboard` |
+| 402 | No balance | `Insufficient wallet balance (required $0.016, available $0.005, deficit $0.011). Add funds at https://vedika.io/dashboard. Do not retry until the wallet is topped up.` Never retried. |
 | 403 | Inactive sub | `Subscription inactive or endpoint not included in your plan.` |
-| 429 | Rate limited | `Rate limited. Retry after 5s.` |
-| 5xx | Server error | Automatically retried once with 1s backoff. |
+| 429 | Rate limited | Classified by the response body `code`. `RATE_LIMIT_EXCEEDED`: `Rate limited. Retry after 5s.` `DAILY_LIMIT_EXCEEDED`: `Daily call limit reached. Do not retry until the limit resets...` Never retried automatically. |
+| 422 | Idempotency key refused | `IDEMPOTENCY_NOT_SUPPORTED`: the endpoint does not take a key and no charge was attempted; send again without `idempotencyKey`. |
+| 5xx | Server error | GET requests and POSTs that carry a caller `idempotencyKey` are retried once with 1s backoff. Other POSTs are not retried, so a failed billed call cannot charge twice. |
 | Timeout | Too slow | `Request timed out after 30s -- /v2/astrology/kundli` |
 
 ### Timeout Configuration
@@ -505,14 +519,14 @@ All errors are returned as MCP tool errors with descriptive messages:
 | Request Type | Timeout | Retries |
 |-------------|---------|---------|
 | AI chat (`vedika_ai_chat`) | 90s | No retry (already long) |
-| POST computation endpoints | 30s | 1 retry on 5xx |
+| POST computation endpoints | 30s | 1 retry on 5xx only with an `idempotencyKey`; none otherwise |
 | GET endpoints | 15s | 1 retry on 5xx |
 
 ---
 
 ## Pricing
 
-No free tier. Every query costs money. Free sandbox available at [vedika.io/sandbox](https://vedika.io/sandbox) for testing with mock data.
+No free tier. Every query costs money. Free sandbox with mock data: set `VEDIKA_BASE_URL=https://api.vedika.io/sandbox`. See also [vedika.io/sandbox](https://vedika.io/sandbox).
 
 | Plan | Price | Wallet Credits/mo | Rate Limit |
 |------|-------|-------------------|------------|
@@ -531,8 +545,8 @@ Get your API key at [vedika.io/pricing](https://vedika.io/pricing).
 - **Transport**: stdio (MCP standard)
 - **Dependencies**: `@modelcontextprotocol/sdk`, `zod` (zero other runtime deps)
 - **HTTP**: Native `fetch` (no axios)
-- **Idempotency**: Every request includes `x-request-id` UUID header to prevent double-billing on retries
-- **Retry**: Automatic 1-retry with 1s backoff on 5xx server errors (not on 4xx or AI chat timeouts)
+- **Idempotency**: No idempotency or request-id header is sent unless a tool takes an explicit `idempotencyKey` (Vastu batch, jobs and `vastu_operation`). The API reads a caller-sent `x-request-id` on `/v2` as an idempotency claim and refuses it with 422 on endpoints that are not certified for idempotency.
+- **Retry**: One retry with 1s backoff on 5xx for GET requests and for POSTs that carry an `idempotencyKey`. A billed POST without a key is never retried. 4xx responses, including 402 and 429, are never retried.
 - **Timeouts**: AI chat 90s, POST computation 30s, GET endpoints 15s
 - **Module format**: This package is ESM-only (`"type": "module"`). Running it
   via `npx`/the `vedika-mcp-server` bin (the normal MCP-client setup above)

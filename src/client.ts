@@ -3,29 +3,36 @@ import { SafeToolInputError } from './tool-wrapper.js';
 import { MCP_SERVER_USER_AGENT } from './version.js';
 
 const PUBLIC_API_ORIGIN = 'https://api.vedika.io';
+// The sandbox is served from the same origin under /sandbox, so credentials
+// still only ever go to the canonical API host.
+const SANDBOX_API_BASE = `${PUBLIC_API_ORIGIN}/sandbox`;
 
 export function resolveVedikaBaseUrl(configured: string | undefined): string {
   const raw = configured?.trim() || PUBLIC_API_ORIGIN;
+  const failure = () => new Error(
+    `VEDIKA_BASE_URL must be exactly ${PUBLIC_API_ORIGIN} (or ${SANDBOX_API_BASE} for the sandbox)`,
+  );
   let url: URL;
 
   try {
     url = new URL(raw);
   } catch {
-    throw new Error(`VEDIKA_BASE_URL must be exactly ${PUBLIC_API_ORIGIN}`);
+    throw failure();
   }
 
   if (
     url.origin !== PUBLIC_API_ORIGIN
-    || url.pathname !== '/'
     || url.search !== ''
     || url.hash !== ''
     || url.username !== ''
     || url.password !== ''
   ) {
-    throw new Error(`VEDIKA_BASE_URL must be exactly ${PUBLIC_API_ORIGIN}`);
+    throw failure();
   }
 
-  return PUBLIC_API_ORIGIN;
+  if (url.pathname === '/') return PUBLIC_API_ORIGIN;
+  if (url.pathname === '/sandbox' || url.pathname === '/sandbox/') return SANDBOX_API_BASE;
+  throw failure();
 }
 
 export class VedikaApiClient {
@@ -67,8 +74,15 @@ export class VedikaApiClient {
     path: string,
     opts: { body?: Record<string, unknown>; params?: Record<string, string>; timeoutMs: number; idempotencyKey?: string },
   ): Promise<T> {
-    const maxRetries = 1;
-    const requestId = opts.idempotencyKey ?? crypto.randomUUID();
+    // A billed POST is only retried when the caller supplied an Idempotency-Key:
+    // without one, a 5xx or a dropped connection after the server charged would
+    // charge again. GET and DELETE are retried once.
+    const maxRetries = method === 'POST' && opts.idempotencyKey === undefined ? 0 : 1;
+    // The only request id we ever send is the caller's own Idempotency-Key. On
+    // /v2 the server treats ANY caller-sent x-request-id as an idempotency
+    // claim and answers 422 IDEMPOTENCY_NOT_SUPPORTED on uncertified routes,
+    // so an automatic id on every call would fail those routes.
+    const requestId = opts.idempotencyKey;
     let lastError: unknown;
 
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
@@ -96,7 +110,7 @@ export class VedikaApiClient {
     method: string,
     path: string,
     opts: { body?: Record<string, unknown>; params?: Record<string, string>; timeoutMs: number; idempotencyKey?: string },
-    requestId: string,
+    requestId: string | undefined,
   ): Promise<T> {
     let url: string;
     if (method === 'GET' && opts.params) {
@@ -138,12 +152,12 @@ export class VedikaApiClient {
     }
   }
 
-  private headers(requestId: string): Record<string, string> {
+  private headers(requestId: string | undefined): Record<string, string> {
     return {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${this.apiKey}`,
       'x-api-key': this.apiKey,
-      'x-request-id': requestId,
+      ...(requestId === undefined ? {} : { 'x-request-id': requestId }),
       'User-Agent': MCP_SERVER_USER_AGENT,
     };
   }

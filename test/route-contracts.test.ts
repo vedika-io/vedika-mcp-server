@@ -183,17 +183,17 @@ test('credential-bearing requests never follow redirects', async () => {
   }
 });
 
-test('a logical retry keeps one request ID for billing idempotency', async () => {
+test('a GET retry sends no request ID that /v2 would read as an idempotency claim', async () => {
   const previousApiKey = process.env['VEDIKA_API_KEY'];
   const previousBaseUrl = process.env['VEDIKA_BASE_URL'];
   const previousFetch = globalThis.fetch;
-  const requestIds: string[] = [];
+  const requestIds: Array<string | undefined> = [];
 
   process.env['VEDIKA_API_KEY'] = 'vk_test_retry_contract';
   delete process.env['VEDIKA_BASE_URL'];
   globalThis.fetch = async (_input, init) => {
     const headers = init?.headers as Record<string, string>;
-    requestIds.push(headers['x-request-id']!);
+    requestIds.push(headers['x-request-id']);
     const status = requestIds.length === 1 ? 500 : 200;
     return new Response(JSON.stringify({ ok: status === 200 }), { status });
   };
@@ -201,8 +201,7 @@ test('a logical retry keeps one request ID for billing idempotency', async () =>
   try {
     const client = new (await import('../src/client.js')).VedikaApiClient();
     await client.get('/v2/astrology/horoscope/aries');
-    assert.equal(requestIds.length, 2);
-    assert.equal(requestIds[0], requestIds[1]);
+    assert.deepEqual(requestIds, [undefined, undefined]);
   } finally {
     globalThis.fetch = previousFetch;
     if (previousApiKey === undefined) delete process.env['VEDIKA_API_KEY'];
