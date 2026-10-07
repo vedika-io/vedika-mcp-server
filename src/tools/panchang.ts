@@ -9,7 +9,7 @@ export function registerPanchangTool(server: McpServer, client: VedikaApiClient)
     'vedika_panchang',
     'Hindu calendar (Panchang) for today or a specific date/time. Returns the 5 limbs: Tithi (lunar day), Nakshatra (lunar mansion), Yoga (luni-solar combination), Karana (half-tithi), and Vara (weekday). Also includes sunrise/sunset/moonrise times. Location defaults to Delhi if not specified. Cost: $0.012/call.',
     {
-      date: z.string().optional().describe('Date in YYYY-MM-DD format. Defaults to today.'),
+      date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe('Date in YYYY-MM-DD format. Defaults to today.'),
       time: z.string().optional().describe('Time in HH:MM format (24h). Defaults to 12:00 (noon). Useful for eclipse timings or specific muhurta.'),
       element: z.enum(['full', 'tithi', 'nakshatra', 'yoga', 'karana']).optional()
         .describe('Get full panchang (default) or a single element.'),

@@ -16,7 +16,7 @@ export function registerChineseZodiacTool(server: McpServer, client: VedikaApiCl
     async (args) => safeTool(async () => {
       const body: Record<string, unknown> = { year: args.year };
       if (args.birthDate) body.birthDate = args.birthDate;
-      const result = await client.post('/v2/chinese/zodiac', body);
+      const result = await client.post('/v2/chinese/zodiac-animal', body);
       return { content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }] };
     })
   );

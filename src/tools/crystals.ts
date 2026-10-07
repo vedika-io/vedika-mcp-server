@@ -20,11 +20,18 @@ export function registerCrystalsTool(server: McpServer, client: VedikaApiClient)
       if (!args.sign && !args.planet && !args.need) {
         return { content: [{ type: 'text' as const, text: 'At least one of sign, planet, or need is required.' }], isError: true };
       }
-      const body: Record<string, unknown> = {};
-      if (args.sign) body.sign = args.sign;
-      if (args.planet) body.planet = args.planet;
-      if (args.need) body.need = args.need;
-      const result = await client.post('/v2/spiritual/crystals/recommend', body);
+      // Route to the correct prod endpoint based on the input type
+      let result: unknown;
+      if (args.sign) {
+        result = await client.get(`/v2/crystals/by-zodiac/${encodeURIComponent(args.sign)}`);
+      } else if (args.planet) {
+        result = await client.get(`/v2/crystals/by-planet/${encodeURIComponent(args.planet)}`);
+      } else {
+        // 'need' maps to the healing POST endpoint
+        const body: Record<string, unknown> = {};
+        if (args.need) body.property = args.need;
+        result = await client.post('/v2/crystals/healing', body);
+      }
       return { content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }] };
     })
   );

@@ -19,7 +19,7 @@ export function registerSpiritualMantraTool(server: McpServer, client: VedikaApi
       const body: Record<string, unknown> = extractBirthDetails(args);
       if (args.planet) body.planet = args.planet;
       if (args.purpose) body.purpose = args.purpose;
-      const result = await client.post('/v2/spiritual/mantra/recommend', body);
+      const result = await client.post('/v2/spiritual/mantra', body);
       return { content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }] };
     })
   );

@@ -23,7 +23,17 @@ export function registerTarotDrawTool(server: McpServer, client: VedikaApiClient
       };
       if (args.question) body.question = args.question;
       if (args.deck) body.deck = args.deck;
-      const result = await client.post('/v2/divination/tarot/draw', body);
+      // Map spread type to the correct prod endpoint path
+      const spreadPaths: Record<string, string> = {
+        'single': '/v2/tarot/draw/single',
+        'three-card': '/v2/tarot/draw/three-card',
+        'celtic-cross': '/v2/tarot/draw/celtic-cross',
+        'horseshoe': '/v2/tarot/draw/horseshoe',
+        'relationship': '/v2/tarot/draw/relationship',
+        'career': '/v2/tarot/draw/career',
+      };
+      const path = spreadPaths[args.spread] || `/v2/tarot/draw/${args.spread}`;
+      const result = await client.post(path, body);
       return { content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }] };
     })
   );

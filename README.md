@@ -1,6 +1,6 @@
 # @vedika-io/mcp-server
 
-MCP server for the [Vedika Intelligence API](https://vedika.io), exposing curated astrology and divination capabilities as semantic tools for AI agents.
+MCP server for the [Vedika Intelligence API](https://vedika.io) — astrology, divination and Vastu capabilities across Vedic, Western, KP, Chinese, Tarot, I Ching, Human Design, Numerology, and Ayurvedic domains, exposed as semantic tools for AI agents.
 
 All calculations powered by Vedika AI. Zero external astrology API dependencies.
 
@@ -14,6 +14,20 @@ Get your API key at [vedika.io/pricing](https://vedika.io/pricing) (starts at $1
 
 ## Configuration
 
+> **Where the key goes matters more than which client you use.**
+>
+> - Put it in the **gitignored** local settings file for your client, never the
+>   shared one. A key in a committed config is a key you have published.
+> - **Pin the version.** The examples below pin `@2.0.6`. `npx -y @vedika-io/mcp-server`
+>   with no version resolves whatever npm currently tags `latest` on *every start*, so
+>   a bad or hijacked release runs the moment it is published, with nothing recording
+>   which version you were on.
+> - Versions **before 2.0.4** send your key to whatever `VEDIKA_BASE_URL` names and
+>   follow a redirect while carrying it. Do not pin below 2.0.4.
+> - The key is a payment credential: every query costs money. Treat it like a card
+>   number, not like a setting.
+
+
 ### Claude Desktop
 
 Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
@@ -23,7 +37,7 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
   "mcpServers": {
     "vedika": {
       "command": "npx",
-      "args": ["-y", "@vedika-io/mcp-server"],
+      "args": ["-y", "@vedika-io/mcp-server@2.0.6"],
       "env": {
         "VEDIKA_API_KEY": "vk_live_your_key_here"
       }
@@ -34,14 +48,19 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 
 ### Claude Code
 
-Add to `.claude/settings.json`:
+Add to `.claude/settings.local.json`:
+
+> **Not `.claude/settings.json`.** That file is the shared, checked-in one — a key
+> put there is committed, pushed, and in your history for good. `settings.local.json`
+> is gitignored and stays on your machine. This README said `settings.json` until
+> 2026-09-07, and the published 2.0.3 package still does.
 
 ```json
 {
   "mcpServers": {
     "vedika": {
       "command": "npx",
-      "args": ["-y", "@vedika-io/mcp-server"],
+      "args": ["-y", "@vedika-io/mcp-server@2.0.6"],
       "env": {
         "VEDIKA_API_KEY": "vk_live_your_key_here"
       }
@@ -58,7 +77,7 @@ Add to Cursor Settings > MCP Servers:
 {
   "vedika": {
     "command": "npx",
-    "args": ["-y", "@vedika-io/mcp-server"],
+    "args": ["-y", "@vedika-io/mcp-server@2.0.6"],
     "env": {
       "VEDIKA_API_KEY": "vk_live_your_key_here"
     }
@@ -75,7 +94,7 @@ Add to `~/.windsurf/mcp_config.json`:
   "mcpServers": {
     "vedika": {
       "command": "npx",
-      "args": ["-y", "@vedika-io/mcp-server"],
+      "args": ["-y", "@vedika-io/mcp-server@2.0.6"],
       "env": {
         "VEDIKA_API_KEY": "vk_live_your_key_here"
       }
@@ -88,8 +107,8 @@ Add to `~/.windsurf/mcp_config.json`:
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `VEDIKA_API_KEY` | Yes | — | Your API key (format: `vk_live_*`) |
-| `VEDIKA_BASE_URL` | No | `https://api.vedika.io` | API base URL override |
+| `VEDIKA_API_KEY` | Yes | — | Your API key (format: `vk_live_*`). Sent as `Authorization: Bearer` and `x-api-key`. |
+| `VEDIKA_BASE_URL` | No | `https://api.vedika.io` | Only `https://api.vedika.io` and the free sandbox `https://api.vedika.io/sandbox` are accepted. Any other value stops the server at startup, so a key cannot be routed to another host. |
 
 ---
 
@@ -125,11 +144,11 @@ Add to `~/.windsurf/mcp_config.json`:
 | `vedika_western_solar_return` | chart, positions, aspects | $0.120 |
 | `vedika_western_relationship` | synastry, synastry-aspects, composite, composite-aspects | $0.148 |
 
-### Cross-System
+### Cross-System (3 tools)
 
 | Tool | Types | Cost |
 |------|-------|------|
-| `vedika_horoscope` | Vedic or Western, daily/weekly/monthly | $0.048-0.092 |
+| `vedika_horoscope` | Vedic daily/weekly/monthly; Western daily or advanced daily | Verify current API pricing |
 | `vedika_numerology` | life-path, destiny, personality, soul-urge, personal-year, complete, compatibility | $0.003-0.010 |
 | `vedika_varshaphal` | Vedic annual solar return (Tajaka system) | $0.006 |
 
@@ -153,7 +172,7 @@ Add to `~/.windsurf/mcp_config.json`:
 | Tool | Description | Cost |
 |------|-------------|------|
 | `vedika_chinese_zodiac` | Chinese zodiac animal, element, yin/yang, lucky numbers/colors, compatible/incompatible animals. Accounts for Chinese New Year dates. | $0.003 |
-| `vedika_chinese_bazi` | Ba Zi Four Pillars of Destiny: Year/Month/Day/Hour pillars, Day Master, 10-year Luck Pillars, Five Element balance. | $0.028 |
+| `vedika_chinese_bazi` | Basic Ba Zi chart from a timezone-free datetime: Year/Month/Day/Hour pillars, Day Master, dominant element, and Five Element balance. Timezone-bearing input is held while accepted civil, zoned, or solar-time semantics remain unresolved. | Verify current API pricing |
 
 ### Alternative Systems
 
@@ -166,7 +185,7 @@ Add to `~/.windsurf/mcp_config.json`:
 
 | Tool | Description | Cost |
 |------|-------------|------|
-| `vedika_matrimony_match` | Comprehensive Kundali matching with Mangal/Nadi/Bhakoot dosha cancellation analysis. North + South Indian systems. | $0.056 |
+| `vedika_matrimony_match` | Kundali matching: 36-point Ashtakoota, Dashakoot summary, dosha cancellations and overall verdict. `southIndian: true` for Porutham. | Verify current API pricing |
 | `vedika_dasha_ashtottari` | Ashtottari 108-year dasha cycle (alternative to Vimshottari). 8 planets, Mahadasha/Antardasha/Pratyantardasha depth. | $0.020 |
 | `vedika_lalkitab_remedies` | Lal Kitab remedies for afflicted planets. Unique totkas (practical remedies) distinct from classical BPHS. Optional debt (rina) analysis. | $0.020 |
 | `vedika_spiritual_mantra` | Personalized mantra recommendations from classical texts. Sanskrit + IAST transliteration, japa count, muhurta, mala material. | $0.016 |
@@ -182,7 +201,7 @@ Add to `~/.windsurf/mcp_config.json`:
 
 | Tool | Description | Cost |
 |------|-------------|------|
-| `vedika_daily_bundle` | All daily content in one call: horoscope + panchang + tarot card + lucky numbers + transits. Saves cost vs individual calls. | $0.040 |
+| `vedika_daily_bundle` | The day's general content in one call: tarot card, angel number, crystal, mantra, moon phase, rune and I Ching. Not a per-sign horoscope. | Verify current API pricing |
 | `vedika_numerology_complete` | Full numerology report: Life Path, Destiny, Soul Urge, Personality, Maturity, Pinnacles, Challenges, Karmic Debt/Lessons. Pythagorean or Chaldean. | $0.010 |
 
 ### Utility
@@ -190,6 +209,19 @@ Add to `~/.windsurf/mcp_config.json`:
 | Tool | Description | Cost |
 |------|-------------|------|
 | `vedika_usage` | Check wallet balance, usage history, summary, model breakdown | Free |
+
+### Vastu
+
+| Tool | Description |
+|------|-------------|
+| `vastu_reference` | Static Vastu reference tables (mandala grids, directions, defects, remedies, colours, materials, gate obstructions) |
+| `vastu_audit_floor_plan` | Audit a room list against the compass zones it occupies |
+| `vastu_room_placement` | Placement guidance for one room type in one zone |
+| `vastu_mandala_project` | Project a Vastu Purusha Mandala grid onto a plot polygon |
+| `vastu_generate_plan` | Generate a Vastu-compliant plan from a plot and room programme |
+| `vastu_declination` | Coarse magnetic-declination reference estimate |
+| `vastu_operation` | Call any other Vastu operation by path suffix. `assessments/batch` requires a retained `idempotencyKey` |
+| `vastu_job_submit`, `vastu_job_status`, `vastu_job_results`, `vastu_job_cancel`, `vastu_job_artifact` | Bulk Vastu jobs and artifacts (see below) |
 
 ---
 
@@ -281,9 +313,7 @@ Accepts both English and Hindi (Roman transliteration):
 
 ```json
 {
-  "datetime": "1990-06-15T14:30:00",
-  "timezone": "+08:00",
-  "gender": "male"
+  "datetime": "1990-06-15T14:30:00"
 }
 ```
 
@@ -292,8 +322,7 @@ Accepts both English and Hindi (Roman transliteration):
 ```json
 {
   "bride": { "datetime": "1994-07-22T08:15:00", "latitude": 19.07, "longitude": 72.87, "timezone": "+05:30", "gender": "female" },
-  "groom": { "datetime": "1992-03-15T10:30:00", "latitude": 28.61, "longitude": 77.20, "timezone": "+05:30", "gender": "male" },
-  "includeRemedies": true
+  "groom": { "datetime": "1992-03-15T10:30:00", "latitude": 28.61, "longitude": 77.20, "timezone": "+05:30", "gender": "male" }
 }
 ```
 
@@ -353,16 +382,16 @@ Accepts both English and Hindi (Roman transliteration):
 
 ```json
 {
-  "dayMaster": { "element": "Fire", "stem": "Bing", "strength": "strong" },
-  "pillars": {
-    "year": { "stem": "Geng", "branch": "Wu", "element": "Metal Horse" },
-    "month": { "stem": "Ren", "branch": "Wu", "element": "Water Horse" },
-    "day": { "stem": "Bing", "branch": "Xu", "element": "Fire Dog" },
-    "hour": { "stem": "Jia", "branch": "Wu", "element": "Wood Horse" }
-  },
-  "elementBalance": { "wood": 1, "fire": 4, "earth": 2, "metal": 1, "water": 1 },
-  "favorableElements": ["Water", "Metal"],
-  "unfavorableElements": ["Fire", "Wood"]
+  "system": "chinese",
+  "chart": {
+    "yearPillar": { "stem": { "name": "Geng", "chinese": "庚", "element": "Metal", "polarity": "Yang" }, "branch": { "name": "Wu", "chinese": "午", "animal": "Horse", "element": "Fire", "polarity": "Yang" }, "label": "Geng Wu" },
+    "monthPillar": { "stem": { "name": "Ren", "chinese": "壬", "element": "Water", "polarity": "Yang" }, "branch": { "name": "Wu", "chinese": "午", "animal": "Horse", "element": "Fire", "polarity": "Yang" }, "label": "Ren Wu" },
+    "dayPillar": { "stem": { "name": "Xin", "chinese": "辛", "element": "Metal", "polarity": "Yin" }, "branch": { "name": "Hai", "chinese": "亥", "animal": "Pig", "element": "Water", "polarity": "Yin" }, "label": "Xin Hai" },
+    "hourPillar": { "stem": { "name": "Yi", "chinese": "乙", "element": "Wood", "polarity": "Yin" }, "branch": { "name": "Wei", "chinese": "未", "animal": "Goat", "element": "Earth", "polarity": "Yin" }, "label": "Yi Wei" },
+    "dayMaster": { "name": "Xin", "chinese": "辛", "element": "Metal", "polarity": "Yin" },
+    "dominantElement": "Water",
+    "elementBalance": { "Wood": 1, "Fire": 2, "Earth": 1, "Metal": 2, "Water": 2 }
+  }
 }
 ```
 
@@ -478,10 +507,11 @@ All errors are returned as MCP tool errors with descriptive messages:
 |--------|---------|-----------------|
 | 400 | Invalid input | `Bad Request: datetime is required` |
 | 401 | Bad API key | `Invalid API key. Get one at https://vedika.io/pricing -- format: vk_live_*` |
-| 402 | No balance | `Insufficient wallet balance ($2.50 remaining). Add funds at https://vedika.io/dashboard` |
+| 402 | No balance | `Insufficient wallet balance (required $0.016, available $0.005, deficit $0.011). Add funds at https://vedika.io/dashboard. Do not retry until the wallet is topped up.` Never retried. |
 | 403 | Inactive sub | `Subscription inactive or endpoint not included in your plan.` |
-| 429 | Rate limited | `Rate limited. Retry after 5s.` |
-| 5xx | Server error | Automatically retried once with 1s backoff. |
+| 429 | Rate limited | Classified by the response body `code`. `RATE_LIMIT_EXCEEDED`: `Rate limited. Retry after 5s.` `DAILY_LIMIT_EXCEEDED`: `Daily call limit reached. Do not retry until the limit resets...` Never retried automatically. |
+| 422 | Idempotency key refused | `IDEMPOTENCY_NOT_SUPPORTED`: the endpoint does not take a key and no charge was attempted; send again without `idempotencyKey`. |
+| 5xx | Server error | GET requests and POSTs that carry a caller `idempotencyKey` are retried once with 1s backoff. Other POSTs are not retried, so a failed billed call cannot charge twice. |
 | Timeout | Too slow | `Request timed out after 30s -- /v2/astrology/kundli` |
 
 ### Timeout Configuration
@@ -489,14 +519,14 @@ All errors are returned as MCP tool errors with descriptive messages:
 | Request Type | Timeout | Retries |
 |-------------|---------|---------|
 | AI chat (`vedika_ai_chat`) | 90s | No retry (already long) |
-| POST computation endpoints | 30s | 1 retry on 5xx |
+| POST computation endpoints | 30s | 1 retry on 5xx only with an `idempotencyKey`; none otherwise |
 | GET endpoints | 15s | 1 retry on 5xx |
 
 ---
 
 ## Pricing
 
-No free tier. Every query costs money. Free sandbox available at [vedika.io/sandbox](https://vedika.io/sandbox) for testing with mock data.
+No free tier. Every query costs money. Free sandbox with mock data: set `VEDIKA_BASE_URL=https://api.vedika.io/sandbox`. See also [vedika.io/sandbox](https://vedika.io/sandbox).
 
 | Plan | Price | Wallet Credits/mo | Rate Limit |
 |------|-------|-------------------|------------|
@@ -515,9 +545,17 @@ Get your API key at [vedika.io/pricing](https://vedika.io/pricing).
 - **Transport**: stdio (MCP standard)
 - **Dependencies**: `@modelcontextprotocol/sdk`, `zod` (zero other runtime deps)
 - **HTTP**: Native `fetch` (no axios)
-- **Idempotency**: Every request includes `x-request-id` UUID header to prevent double-billing on retries
-- **Retry**: Automatic 1-retry with 1s backoff on 5xx server errors (not on 4xx or AI chat timeouts)
+- **Idempotency**: No idempotency or request-id header is sent unless a tool takes an explicit `idempotencyKey` (Vastu batch, jobs and `vastu_operation`). The API reads a caller-sent `x-request-id` on `/v2` as an idempotency claim and refuses it with 422 on endpoints that are not certified for idempotency.
+- **Retry**: One retry with 1s backoff on 5xx for GET requests and for POSTs that carry an `idempotencyKey`. A billed POST without a key is never retried. 4xx responses, including 402 and 429, are never retried.
 - **Timeouts**: AI chat 90s, POST computation 30s, GET endpoints 15s
+- **Module format**: This package is ESM-only (`"type": "module"`). Running it
+  via `npx`/the `vedika-mcp-server` bin (the normal MCP-client setup above)
+  works regardless of your own project's module format. If you instead import
+  it as a library from a CommonJS project, plain `require('@vedika-io/mcp-server')`
+  will throw — use a dynamic import instead:
+  ```js
+  const { VedikaApiClient } = await import('@vedika-io/mcp-server');
+  ```
 
 ## Links
 
@@ -531,3 +569,9 @@ Get your API key at [vedika.io/pricing](https://vedika.io/pricing).
 ## License
 
 MIT
+
+### Vastu jobs and artifacts
+
+Call `vastu_job_submit` with `request.operation` set to `assessments`, `plan-analyze` or `plan-report`, `request.items` containing unique `{id, input}` objects, and a caller-retained `idempotencyKey`. For a report handoff, use `input.format: "html"`; JSON reports and plan analyses expose JSON artifacts. Submission returns a stable `jobId` and `maxCharge` quote. Each successful item uses the existing single-item price, with no extra job fee; invalid items do not charge.
+
+Use `vastu_job_status` to poll counts and charges, `vastu_job_results` to read pages (`nextCursor: null` ends pagination), and `vastu_job_artifact` with `jobId` and `itemId` to retrieve the exact deliverable and receipt. The same artifact is a read-only resource at `vedika://vastu/jobs/{jobId}/items/{itemId}`; URL-encode the item ID. Results and artifacts expire after seven days. `vastu_job_cancel` stops unstarted items; an in-flight item can complete and charge. The deployment must already have jobs enabled. This source change does not publish the package.

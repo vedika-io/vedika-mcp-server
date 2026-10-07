@@ -4,26 +4,26 @@ import type { VedikaApiClient } from '../client.js';
 import { MatrimonyMatchPersonSchema } from '../schemas.js';
 import { safeTool } from '../tool-wrapper.js';
 
+// Live routes: POST /v2/matrimony/unified-match (Ashtakoota + Dashakoot + all
+// dosha cancellations + overall verdict) and POST /v2/matrimony/south-match
+// (Porutham). Both take `male` and `female`. The earlier
+// /v2/astrology/matrimony/match path does not exist and answers 404.
+const UNIFIED_MATCH_PATH = '/v2/matrimony/unified-match';
+const SOUTH_MATCH_PATH = '/v2/matrimony/south-match';
+
 export function registerMatrimonyMatchTool(server: McpServer, client: VedikaApiClient): void {
   server.tool(
     'vedika_matrimony_match',
-    'Comprehensive Kundali matching for marriage with dosha cancellation analysis. Goes beyond basic Guna Milan — includes Mangal Dosha detection for BOTH persons with cancellation rules (e.g., Mars in own sign, Jupiter aspect, mutual Manglik), Nadi Dosha exceptions, Bhakoot Dosha cancellation by lord friendship, and Rajju Balam analysis. Returns 36-point Guna score, individual dosha status, cancellation verdicts, overall compatibility recommendation, and suggested remedies if doshas are present but cancellable. Cost: $0.056/call.',
+    'Comprehensive Kundali matching for marriage. The default report combines the 36-point Ashtakoota Guna Milan, a Dashakoot summary, dosha cancellation analysis (Mangal, Nadi, Bhakoot) and an overall compatibility verdict. Set southIndian=true for the South Indian Porutham system instead. Consult current Vedika API pricing before use.',
     {
       bride: MatrimonyMatchPersonSchema.describe('Bride birth details including gender.'),
       groom: MatrimonyMatchPersonSchema.describe('Groom birth details including gender.'),
-      includeRemedies: z.boolean().optional()
-        .describe('Include BPHS-based remedies for detected doshas. Default: true.'),
       southIndian: z.boolean().optional()
-        .describe('Use South Indian (Porutham) matching system instead of North Indian (Ashtakoot). Default: false.'),
+        .describe('Use South Indian (Porutham) matching system instead of the unified North Indian (Ashtakoota) report. Default: false.'),
     },
     async (args) => safeTool(async () => {
-      const body: Record<string, unknown> = {
-        bride: args.bride,
-        groom: args.groom,
-      };
-      if (args.includeRemedies !== undefined) body.includeRemedies = args.includeRemedies;
-      if (args.southIndian !== undefined) body.southIndian = args.southIndian;
-      const result = await client.post('/v2/astrology/matrimony/match', body);
+      const path = args.southIndian ? SOUTH_MATCH_PATH : UNIFIED_MATCH_PATH;
+      const result = await client.post(path, { male: args.groom, female: args.bride });
       return { content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }] };
     })
   );

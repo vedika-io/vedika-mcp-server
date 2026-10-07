@@ -24,7 +24,7 @@ export function registerNumerologyCompleteTool(server: McpServer, client: Vedika
       };
       if (args.system) body.system = args.system;
       if (args.currentName) body.currentName = args.currentName;
-      const result = await client.post('/v2/numerology/complete', body);
+      const result = await client.post('/v2/astrology/numerology/complete', body);
       return { content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }] };
     })
   );

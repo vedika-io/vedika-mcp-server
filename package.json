@@ -1,17 +1,26 @@
 {
   "name": "@vedika-io/mcp-server",
-  "version": "2.0.1",
-  "description": "MCP server exposing Vedika astrology and divination capabilities as semantic tools for AI agents",
+  "version": "2.0.6",
+  "description": "MCP server for Vedika astrology and Vastu APIs",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
   "bin": {
     "vedika-mcp-server": "dist/index.js"
   },
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/index.ts",
-    "prepublishOnly": "npm run build"
+    "pretest": "npm run build",
+    "test": "tsx --test test/*.test.ts",
+    "prepack": "npm run build",
+    "prepublishOnly": "npm test"
   },
   "keywords": [
     "mcp",
@@ -33,7 +42,7 @@
     "dasha",
     "dosha",
     "panchang",
-    "swiss-ephemeris",
+    "vedic-calculations",
     "tarot",
     "iching",
     "chinese-zodiac",
@@ -43,7 +52,8 @@
     "ayurvedic",
     "lalkitab",
     "mantra",
-    "matrimony"
+    "matrimony",
+    "vastu"
   ],
   "author": "Vedika Intelligence <support@vedika.io>",
   "license": "MIT",
@@ -59,7 +69,7 @@
     "node": ">=20.0.0"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.12.0",
+    "@modelcontextprotocol/sdk": "^1.26.0",
     "zod": "^3.24.0"
   },
   "devDependencies": {
@@ -67,5 +77,13 @@
     "tsx": "^4.19.0",
     "typescript": "^5.6.0"
   },
-  "mcpName": "io.github.vedika-io/astrology"
+  "overrides": {
+    "esbuild": "^0.28.1",
+    "fast-uri": "3.1.8"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ]
 }

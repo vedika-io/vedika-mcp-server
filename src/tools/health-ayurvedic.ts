@@ -19,7 +19,7 @@ export function registerHealthAyurvedicTool(server: McpServer, client: VedikaApi
       const body: Record<string, unknown> = extractBirthDetails(args);
       if (args.includeRemedies !== undefined) body.includeRemedies = args.includeRemedies;
       if (args.includeSeasonal !== undefined) body.includeSeasonal = args.includeSeasonal;
-      const result = await client.post('/v2/health/ayurvedic/prakriti', body);
+      const result = await client.post('/v2/health/ayurvedic-type', body);
       return { content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }] };
     })
   );

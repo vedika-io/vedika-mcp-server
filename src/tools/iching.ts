@@ -17,7 +17,7 @@ export function registerIChingTool(server: McpServer, client: VedikaApiClient): 
       const body: Record<string, unknown> = {};
       if (args.question) body.question = args.question;
       if (args.method) body.method = args.method;
-      const result = await client.post('/v2/divination/iching/cast', body);
+      const result = await client.post('/v2/iching/cast', body);
       return { content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }] };
     })
   );

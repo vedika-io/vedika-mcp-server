@@ -1,30 +1,25 @@
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { VedikaApiClient } from '../client.js';
-import { safeTool } from '../tool-wrapper.js';
+import { safeTool, SafeToolInputError } from '../tool-wrapper.js';
+
+const LOCAL_BAZI_DATETIME = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,9})?)?$/;
 
 export function registerChineseBaziTool(server: McpServer, client: VedikaApiClient): void {
   server.tool(
     'vedika_chinese_bazi',
-    'Calculate Ba Zi (Four Pillars of Destiny) chart from birth details. Returns the Year, Month, Day, and Hour pillars — each with a Heavenly Stem and Earthly Branch. Includes the Day Master element, 10-year Luck Pillars (Da Yun), annual Luck Pillar, Five Element balance analysis, and favorable/unfavorable elements. Ba Zi is the foundation of Chinese astrology, analogous to a birth chart in Western/Vedic systems. Cost: $0.028/call.',
+    'Calculate the current basic Ba Zi (Four Pillars) chart from a timezone-free birth datetime. Returns Year, Month, Day, and Hour pillars, Day Master, dominant element, and element balance. This route does not provide Da Yun, annual luck pillars, or favorable/unfavorable elements. Timezone-bearing input is temporarily rejected while accepted civil, zoned, or solar-time semantics remain unresolved. Consult current Vedika API pricing before use.',
     {
-      datetime: z.string()
-        .describe('Birth date and time in ISO 8601 format, e.g. "1990-06-15T14:30:00". Hour of birth is critical for the Hour Pillar.'),
-      timezone: z.string()
-        .describe('Timezone as UTC offset "+08:00" or IANA name "Asia/Shanghai". Important for accurate Hour Pillar.'),
-      gender: z.enum(['male', 'female'])
-        .describe('Gender determines Luck Pillar direction (forward or backward through stems/branches).'),
-      name: z.string().optional()
-        .describe('Person name for the report.'),
+      datetime: z.string().regex(LOCAL_BAZI_DATETIME)
+        .describe('Birth date and time without Z or UTC offset, e.g. "1990-06-15T14:30:00".'),
     },
     async (args) => safeTool(async () => {
-      const body: Record<string, unknown> = {
-        datetime: args.datetime,
-        timezone: args.timezone,
-        gender: args.gender,
-      };
-      if (args.name) body.name = args.name;
-      const result = await client.post('/v2/chinese/bazi', body);
+      if (!LOCAL_BAZI_DATETIME.test(args.datetime)) {
+        throw new SafeToolInputError(
+          'Ba Zi datetime must omit Z and UTC offsets while accepted time semantics remain unresolved, for example 1990-06-15T14:30:00.'
+        );
+      }
+      const result = await client.post('/v2/chinese/bazi/chart', { datetime: args.datetime });
       return { content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }] };
     })
   );

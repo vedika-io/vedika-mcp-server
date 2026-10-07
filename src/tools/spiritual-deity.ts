@@ -16,7 +16,7 @@ export function registerSpiritualDeityTool(server: McpServer, client: VedikaApiC
     async (args) => safeTool(async () => {
       const body: Record<string, unknown> = extractBirthDetails(args);
       if (args.includeRemedies !== undefined) body.includeRemedies = args.includeRemedies;
-      const result = await client.post('/v2/spiritual/deity/ishta', body);
+      const result = await client.post('/v2/spiritual/deity', body);
       return { content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }] };
     })
   );
