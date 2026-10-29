@@ -56,7 +56,7 @@ function captureTool(
   };
 }
 
-test('Ba Zi uses the Rust route and sends only accepted runtime input', async () => {
+test('Ba Zi uses the registered route and sends only accepted runtime input', async () => {
   const tool = captureTool(registerChineseBaziTool);
 
   const result = await tool.invoke({
@@ -96,7 +96,7 @@ test('Vedic horoscope keeps daily, weekly, and monthly route semantics', async (
   ]);
 });
 
-test('Western daily and advanced daily use only registered Rust routes', async () => {
+test('Western daily and advanced daily use only registered routes', async () => {
   const tool = captureTool(registerHoroscopeTool);
 
   await tool.invoke({ sign: 'leo', system: 'western', period: 'daily' });
@@ -127,7 +127,7 @@ test('package, lock root, and shared runtime metadata use one release value', ()
     readFileSync(new URL('../package-lock.json', import.meta.url), 'utf8'),
   ) as { version: string; packages: { '': { version: string } } };
 
-  assert.equal(MCP_SERVER_VERSION, '2.0.6');
+  assert.match(MCP_SERVER_VERSION, /^\d+\.\d+\.\d+$/);
   assert.equal(packageJson.version, MCP_SERVER_VERSION);
   assert.equal(packageLock.version, MCP_SERVER_VERSION);
   assert.equal(packageLock.packages[''].version, MCP_SERVER_VERSION);

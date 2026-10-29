@@ -156,7 +156,6 @@ export class VedikaApiClient {
     return {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${this.apiKey}`,
-      'x-api-key': this.apiKey,
       ...(requestId === undefined ? {} : { 'x-request-id': requestId }),
       'User-Agent': MCP_SERVER_USER_AGENT,
     };

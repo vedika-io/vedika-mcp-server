@@ -333,7 +333,7 @@ export function registerVastuTools(server: McpServer, client: VedikaApiClient): 
     `Call any Vastu Shastra operation directly by its path suffix under /v2/astrology/vastu/ — for the long tail of the ${VASTU_OPERATIONS.length}-operation surface not covered by the dedicated vastu_* tools. Examples: "entrance/recommend", "entrance/pada", "entrance/obstruction-check", "placement/borewell", "placement/main-gate", "score/overall", "score/zone-wise", "specialized/temple", "timing/grihapravesh", "timing/bhumi-pujan", "plot/shape", "plot/slope", "compound/wall-analysis", "elements/distribution", "plan/analyze", "plan/optimize", "direction/sun-path", "ar/true-north-calibrate". Prefer a dedicated vastu_* tool when your need matches one.`,
     {
       op: z.string().describe('Path suffix under /v2/astrology/vastu/, e.g. "score/overall" or "placement/borewell". A leading slash or surrounding whitespace is trimmed.'),
-      params: z.record(z.unknown()).default({}).describe('Request body for the operation. Shape depends on the operation.'),
+      params: z.record(z.string(), z.unknown()).default({}).describe('Request body for the operation. Shape depends on the operation.'),
       idempotencyKey: z.string().min(1).max(200).optional().describe('Required for assessments/batch. Retain the same key for retries of one logical batch; use a new key for a new batch. Sent as the Idempotency-Key header, outside the body.'),
     },
     async (args) => safeTool(async () => {

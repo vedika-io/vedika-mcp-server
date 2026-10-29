@@ -46,9 +46,11 @@ test('vastu_operation states the operation count derived from the list', () => {
 // poll, cancel and fetch artifacts without blocking for job completion.
 const ASYNC_JOB_OPERATIONS = new Set(['jobs', 'jobs/{id}', 'jobs/{id}/results', 'jobs/{id}/cancel']);
 
-const publishedSpec = fileURLToPath(new URL('../../../web/vedika-public/openapi.json', import.meta.url));
+const canonicalSpec = fileURLToPath(new URL('../../../web/vedika-public/openapi.json', import.meta.url));
+const publishedSpec = existsSync(canonicalSpec) ? canonicalSpec
+  : fileURLToPath(new URL('./fixtures/public-vastu-paths.json', import.meta.url));
 
-test('the operation list equals the published OpenAPI Vastu paths', { skip: existsSync(publishedSpec) ? false : 'published OpenAPI spec is not in this checkout' }, () => {
+test('the operation list equals the published OpenAPI Vastu paths', () => {
   const spec = JSON.parse(readFileSync(publishedSpec, 'utf8')) as { paths: Record<string, unknown> };
   const prefix = '/v2/astrology/vastu/';
   const published = Object.keys(spec.paths)
@@ -64,7 +66,7 @@ test('the operation list equals the published OpenAPI Vastu paths', { skip: exis
 // which a JSON tool-call argument cannot carry, and it only prepares context
 // for an AI query. An agent passes the Vedika report JSON as
 // vastuContext.report on the query instead.
-test('the report-chat PDF upload stays outside the MCP operation list', { skip: existsSync(publishedSpec) ? false : 'published OpenAPI spec is not in this checkout' }, () => {
+test('the report-chat PDF upload stays outside the MCP operation list', () => {
   const spec = JSON.parse(readFileSync(publishedSpec, 'utf8')) as { paths: Record<string, unknown> };
   assert.ok(spec.paths['/api/v1/vastu/chat/uploads'], 'the upload route is published');
   assert.equal(VASTU_OPERATIONS.some((op) => op.includes('upload') && op.startsWith('chat')), false);

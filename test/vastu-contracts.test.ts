@@ -49,7 +49,7 @@ function captureVastuTools() {
 }
 
 // The 11 GET-only reference tables, version catalog and GET+POST dual, registered in
-// rust/vedika-api-rust/crates/vedika-v2/src/vastu.rs (GET-classified set).
+// Public Vastu endpoints classified for GET requests.
 const GET_OPS = [
   'reference/directions/8',
   'reference/directions/16',
@@ -140,7 +140,7 @@ const completePlan = {
   },
 };
 
-test('plan schema preserves the complete Rust room brief and rejects missing required input', async () => {
+test('plan schema preserves the complete room brief and rejects missing required input', async () => {
   const { schemas, handlers, calls } = captureVastuTools();
   const schema = z.object(schemas.get('vastu_generate_plan')!);
   const parsed = schema.parse(completePlan);
