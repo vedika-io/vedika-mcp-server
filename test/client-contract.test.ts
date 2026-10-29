@@ -34,6 +34,7 @@ test('a plain /v2 POST sends neither x-request-id nor an idempotency key', async
   assert.equal(seen[0]!.headers.get('idempotency-key'), null);
   assert.equal(seen[0]!.headers.get('x-idempotency-key'), null);
   assert.equal(seen[0]!.headers.get('authorization'), 'Bearer dummy-test-key');
+  assert.equal(seen[0]!.headers.get('x-api-key'), null);
 });
 
 test('a billed POST without an idempotency key is never retried', async (t) => {

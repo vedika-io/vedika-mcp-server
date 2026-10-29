@@ -1,8 +1,12 @@
-# Unreleased
+# 2.0.8 - 2026-10-16
+
+- Send the API key only as `Authorization: Bearer`. The legacy `x-api-key` header is no longer sent alongside it. The API accepts both, so nothing changes for you.
+
+# 2.0.7 release candidate - 2026-10-13
 
 - Typed `vastu_job_submit`, `vastu_job_status`, `vastu_job_results`, `vastu_job_cancel` and `vastu_job_artifact` tools, with input/output schemas and completed-artifact MCP resources.
 - Bulk plan-analyze and plan-report workflow, retained idempotency keys, maximum quotes and exact per-item billing receipts.
-- Refreshed published Vastu operation inventory. No npm publication in this change.
+- Refreshed Vastu operation inventory. Publication is recorded separately after registry readback.
 - Stop sending an automatic `x-request-id` on every request. The API reads a caller-sent `x-request-id` on `/v2` as an idempotency claim and answers 422 `IDEMPOTENCY_NOT_SUPPORTED` on endpoints that are not certified for idempotency. The header is now sent only when a tool is given an explicit `idempotencyKey`, and then it equals that key.
 - A billed POST is no longer retried on 5xx or a dropped connection unless it carries a caller `idempotencyKey`, so a failed call cannot charge twice. GET requests keep their single retry.
 - Tool errors now carry the detail an agent needs: 402 `INSUFFICIENT_BALANCE*` reports required, available and deficit and says not to retry; 429 is classified by the body `code` (`DAILY_LIMIT_EXCEEDED` is not retryable, `RATE_LIMIT_EXCEEDED` reports `retryAfter`); 422 `IDEMPOTENCY_NOT_SUPPORTED` says to resend without a key. Upstream text is still never echoed.

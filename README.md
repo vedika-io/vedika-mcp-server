@@ -2,7 +2,11 @@
 
 MCP server for the [Vedika Intelligence API](https://vedika.io) — astrology, divination and Vastu capabilities across Vedic, Western, KP, Chinese, Tarot, I Ching, Human Design, Numerology, and Ayurvedic domains, exposed as semantic tools for AI agents.
 
-All calculations powered by Vedika AI. Zero external astrology API dependencies.
+The server calls the documented Vedika API operations. Calculation and interpretation coverage varies by tool and account plan.
+
+## Discovery metadata
+
+The `server.json` descriptor identifies this package as `io.github.vedika-io/vedika-mcp-server` and uses standard input/output transport. It declares `VEDIKA_API_KEY` as a required secret environment variable. Supply your key in your MCP client's private environment settings; the descriptor contains no key value.
 
 ## Quick Start
 
@@ -18,7 +22,7 @@ Get your API key at [vedika.io/pricing](https://vedika.io/pricing) (starts at $1
 >
 > - Put it in the **gitignored** local settings file for your client, never the
 >   shared one. A key in a committed config is a key you have published.
-> - **Pin the version.** The examples below pin `@2.0.6`. `npx -y @vedika-io/mcp-server`
+> - **Pin the version.** The examples below pin `@2.0.9`. `npx -y @vedika-io/mcp-server`
 >   with no version resolves whatever npm currently tags `latest` on *every start*, so
 >   a bad or hijacked release runs the moment it is published, with nothing recording
 >   which version you were on.
@@ -37,7 +41,7 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
   "mcpServers": {
     "vedika": {
       "command": "npx",
-      "args": ["-y", "@vedika-io/mcp-server@2.0.6"],
+      "args": ["-y", "@vedika-io/mcp-server@2.0.9"],
       "env": {
         "VEDIKA_API_KEY": "vk_live_your_key_here"
       }
@@ -60,7 +64,7 @@ Add to `.claude/settings.local.json`:
   "mcpServers": {
     "vedika": {
       "command": "npx",
-      "args": ["-y", "@vedika-io/mcp-server@2.0.6"],
+      "args": ["-y", "@vedika-io/mcp-server@2.0.9"],
       "env": {
         "VEDIKA_API_KEY": "vk_live_your_key_here"
       }
@@ -77,7 +81,7 @@ Add to Cursor Settings > MCP Servers:
 {
   "vedika": {
     "command": "npx",
-    "args": ["-y", "@vedika-io/mcp-server@2.0.6"],
+    "args": ["-y", "@vedika-io/mcp-server@2.0.9"],
     "env": {
       "VEDIKA_API_KEY": "vk_live_your_key_here"
     }
@@ -94,7 +98,7 @@ Add to `~/.windsurf/mcp_config.json`:
   "mcpServers": {
     "vedika": {
       "command": "npx",
-      "args": ["-y", "@vedika-io/mcp-server@2.0.6"],
+      "args": ["-y", "@vedika-io/mcp-server@2.0.9"],
       "env": {
         "VEDIKA_API_KEY": "vk_live_your_key_here"
       }
@@ -107,7 +111,7 @@ Add to `~/.windsurf/mcp_config.json`:
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `VEDIKA_API_KEY` | Yes | — | Your API key (format: `vk_live_*`). Sent as `Authorization: Bearer` and `x-api-key`. |
+| `VEDIKA_API_KEY` | Yes | — | Your API key (format: `vk_live_*`). Sent as `Authorization: Bearer`. |
 | `VEDIKA_BASE_URL` | No | `https://api.vedika.io` | Only `https://api.vedika.io` and the free sandbox `https://api.vedika.io/sandbox` are accepted. Any other value stops the server at startup, so a key cannot be routed to another host. |
 
 ---
@@ -118,7 +122,7 @@ Add to `~/.windsurf/mcp_config.json`:
 
 | Tool | Description | Cost |
 |------|-------------|------|
-| `vedika_ai_chat` | Natural language astrology Q&A with AI interpretation. Vedic/Western/KP systems. 30 languages. Multi-turn conversations. Anti-hallucination validated. | $0.008-0.05/query |
+| `vedika_ai_chat` | Natural-language questions with Vedic, Western or KP selection and follow-up conversations. Operation and language availability depend on the route and account plan. | [Current billing terms](https://vedika.io/pricing) |
 | `vedika_conversation` | List, get, delete, or extend multi-turn conversations. | Free |
 
 ### Vedic Computation
@@ -574,4 +578,4 @@ MIT
 
 Call `vastu_job_submit` with `request.operation` set to `assessments`, `plan-analyze` or `plan-report`, `request.items` containing unique `{id, input}` objects, and a caller-retained `idempotencyKey`. For a report handoff, use `input.format: "html"`; JSON reports and plan analyses expose JSON artifacts. Submission returns a stable `jobId` and `maxCharge` quote. Each successful item uses the existing single-item price, with no extra job fee; invalid items do not charge.
 
-Use `vastu_job_status` to poll counts and charges, `vastu_job_results` to read pages (`nextCursor: null` ends pagination), and `vastu_job_artifact` with `jobId` and `itemId` to retrieve the exact deliverable and receipt. The same artifact is a read-only resource at `vedika://vastu/jobs/{jobId}/items/{itemId}`; URL-encode the item ID. Results and artifacts expire after seven days. `vastu_job_cancel` stops unstarted items; an in-flight item can complete and charge. The deployment must already have jobs enabled. This source change does not publish the package.
+Use `vastu_job_status` to poll counts and charges, `vastu_job_results` to read pages (`nextCursor: null` ends pagination), and `vastu_job_artifact` with `jobId` and `itemId` to retrieve the exact deliverable and receipt. The same artifact is a read-only resource at `vedika://vastu/jobs/{jobId}/items/{itemId}`; URL-encode the item ID. Results and artifacts expire after seven days. `vastu_job_cancel` stops unstarted items; an in-flight item can complete and charge. Use package version 2.0.7 or later for these tools, and confirm that jobs are available on your account. The keyless sandbox returns stateless previews; it cannot retain a job for status or artifact retrieval.

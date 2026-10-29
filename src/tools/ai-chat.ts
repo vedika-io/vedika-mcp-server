@@ -16,17 +16,17 @@ const BirthDetailsInput = z.object({
 export function registerAiChatTool(server: McpServer, client: VedikaApiClient): void {
   server.tool(
     'vedika_ai_chat',
-    'Ask Vedika AI any astrology question with optional birth details. This is the flagship endpoint — AI-powered interpretation with precision-validated chart computation (30 languages). Supports Vedic (sidereal, nakshatras, dashas, yogas), Western (tropical, transits, progressions), and KP (sub-lord, significator) systems. Multi-turn conversations via conversationId. Can take 5-90 seconds depending on query complexity. Cost: token-based, typically $0.008-0.05/query.',
+    'Send natural-language astrology questions to the Vedika API, with birth details when the operation requires them. Select Vedic, Western or KP through the documented system field; use conversationId for follow-up questions. Operation and language availability depend on the route and account plan. Response time depends on request complexity, answer length and selected tier. Review current billing terms at https://vedika.io/pricing before production use.',
     {
       question: z.string().min(1).max(5000)
-        .describe('Your astrology question in natural language. Can be in any of 30 supported languages.'),
+        .describe('Your astrology question in natural language. Confirm language coverage for the selected operation and account plan.'),
       birthDetails: BirthDetailsInput,
       partnerBirthDetails: BirthDetailsInput
         .describe('Partner/second person birth details for compatibility questions.'),
       system: z.enum(['vedic', 'western', 'kp']).optional()
         .describe('Astrology system. vedic=sidereal with nakshatras/dashas/yogas (default). western=tropical with transits/aspects. kp=Krishnamurti sub-lord analysis.'),
       language: z.string().optional()
-        .describe('Response language code: en, hi, ta, te, kn, ml, mr, gu, bn, pa, od, etc. (30 languages). Default: en.'),
+        .describe('Response language code, for example en, hi or ta. Availability depends on the operation and account plan. Default: en.'),
       conversationId: z.string().optional()
         .describe('ID from a previous response to continue a multi-turn conversation with context.'),
       speed: z.enum(['standard', 'fast', 'eco']).optional()

@@ -154,7 +154,7 @@ test('the shipped client refuses a redirect instead of resending the key', async
 test('a misconfigured base URL fails without printing the key', async () => {
   const previousApiKey = process.env['VEDIKA_API_KEY'];
   const previousBaseUrl = process.env['VEDIKA_BASE_URL'];
-  const secret = 'vk_live_release_artifact_secret';
+  const secret = 'vk_live_FAKE_release_artifact_secret';
 
   process.env['VEDIKA_API_KEY'] = secret;
   process.env['VEDIKA_BASE_URL'] = 'https://evil.example';
@@ -183,7 +183,7 @@ test('an API failure surfaced to the MCP host never carries the key', async () =
   const previousApiKey = process.env['VEDIKA_API_KEY'];
   const previousBaseUrl = process.env['VEDIKA_BASE_URL'];
   const previousFetch = globalThis.fetch;
-  const secret = 'vk_live_never_surfaced_to_the_model';
+  const secret = 'vk_live_FAKE_never_surfaced_to_the_model';
 
   process.env['VEDIKA_API_KEY'] = secret;
   delete process.env['VEDIKA_BASE_URL'];
@@ -227,5 +227,5 @@ test('the release gates cannot pack or publish an unbuilt tree', () => {
   assert.equal(pkg.scripts['pretest'], 'npm run build');
 
   // An allowlist, so a new top-level file cannot ship by being forgotten.
-  assert.deepEqual(pkg.files, ['dist', 'README.md', 'LICENSE']);
+  assert.deepEqual(pkg.files, ['dist', 'README.md', 'LICENSE', 'server.json']);
 });

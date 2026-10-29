@@ -29,10 +29,10 @@ const StoredArtifact = z.object({
   jobId: JobIdSchema, itemId: ItemId, artifactId: z.string().min(1),
   contentType: z.string(), filename: z.string(), content: z.string(),
 });
-const ResultItem = z.object({ id: ItemId, index:z.number().int(),status:z.number().int(),code:z.string().nullable().optional(),response:z.record(z.unknown()),artifacts:z.array(StoredArtifact).optional() });
+const ResultItem = z.object({ id: ItemId, index:z.number().int(),status:z.number().int(),code:z.string().nullable().optional(),response:z.record(z.string(), z.unknown()),artifacts:z.array(StoredArtifact).optional() });
 const ResultsData = z.object({ jobId:JobIdSchema,jobStatus:Status,results:z.array(ResultItem),nextCursor:z.string().nullable() });
 const envelope = <T extends z.ZodTypeAny>(data:T) => z.object({success:z.literal(true),data});
-const ArtifactData = z.object({jobId:JobIdSchema,itemId:ItemId,artifactId:z.string(),uri:z.string(),contentType:z.string(),filename:z.string(),content:z.string(),billing:z.record(z.unknown()).optional()});
+const ArtifactData = z.object({jobId:JobIdSchema,itemId:ItemId,artifactId:z.string(),uri:z.string(),contentType:z.string(),filename:z.string(),content:z.string(),billing:z.record(z.string(), z.unknown()).optional()});
 const jobPath = (id:string) => `/v2/astrology/vastu/jobs/${JobIdSchema.parse(id)}`;
 const resourceUri = (jobId:string,itemId:string) => `vedika://vastu/jobs/${jobId}/items/${encodeURIComponent(itemId)}`;
 function reply(value: unknown) { return {content:[{type:'text' as const,text:JSON.stringify(value)}],structuredContent:value as Record<string,unknown>}; }

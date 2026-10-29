@@ -1,94 +1,59 @@
 # Releasing `@vedika-io/mcp-server`
 
-The fix for the 2026-07-20 credential-routing incident
-(`docs/ops/incidents/2026-07-20-mcp-server-credential-routing-risk.md`) has been
-in this source tree since 2026-07-26 and has never been published. `2.0.3` —
-published 2026-06-12 and still the `latest` tag — sends the caller's API key to
-whatever `VEDIKA_BASE_URL` names, and follows redirects while carrying it.
-`2.0.4` in this tree pins both.
+Use this procedure from the public package repository. A source merge, an npm release and an MCP Registry listing are separate steps. Keep their evidence separate. Publishing requires an authorized package maintainer and control of the intended registry namespace.
 
-Publishing is the only remaining step and it is the founder's call.
+## Prepare one release
 
-## The one command
+Use the Node.js version declared by `package.json`. Start from the reviewed release revision with no unrelated changes. Keep the package version, lockfile root version, runtime version and `server.json` package version aligned. `package.json` must declare `mcpName` equal to the server name in `server.json`.
 
-```bash
-cd integrations/mcp-server && npm ci && npm publish
+Review the release diff, dependency changes, installation examples and package allowlist. Descriptions must describe supported capabilities and limitations. Do not infer performance, calculation accuracy or language availability from a package version.
+
+## Build, test and inspect
+
+```sh
+npm ci
+npm test
+npm pack --json
 ```
 
-That is the whole release. It is self-gating: `npm publish` runs
-`prepublishOnly` → `npm test` → `pretest` → `npm run build`, so the 24 tests run
-against a freshly compiled `dist/`, and `prepack` rebuilds `dist/` again into
-the tarball. A failing test or a broken build aborts before anything reaches the
-registry.
+The package scripts build before tests and packing. `npm pack` does not replace the full test run. Keep the produced tarball and its recorded integrity value; do not rebuild a different artifact for publication.
 
-The `npm ci` is not optional on a fresh checkout. `node_modules/` is not
-committed, and without it `tsc` cannot resolve `zod` or the MCP SDK, so
-`prepublishOnly` aborts on a wall of TS2307 errors rather than on anything
-meaningful. Verified on 2026-09-07 by deleting `node_modules/` and `dist/`:
-`npm test` alone fails to compile; `npm ci && npm test` gives 24 passing and
-`npm pack --dry-run` gives 90 files.
+Inspect the actual tarball. It must contain the executable entry point, type declarations, runtime modules, README, license, package metadata and `server.json` required by the reviewed release. Reject unexpected files, credentials, source maps or incomplete compiled output. Review the package contents rather than relying on a historical file count.
 
-`npm login` first if `npm whoami` errors. The publishing identity is the
-`vedika-io` npm org; the sole maintainer on record is `kaalchakrteam@gmail.com`,
-which is a personal Google account, so the login and its OTP need the founder.
+Install that exact tarball in an isolated consumer directory and run the public mock-protocol and credential-routing checks against its compiled code. Verify initialization and tool listing, representative mocked tool calls, allowed API-origin handling and redirect refusal. Use synthetic credentials and mocked responses; these checks require no production API request.
 
-## Optional preflight (read-only, changes nothing)
+Before uploading, verify that the intended version is unused and the publisher has the existing package permissions. An authentication or registry failure is not proof that a version is available. Never reuse an existing name/version combination, even after a failed-looking publication attempt. See the [npm publication rules](https://docs.npmjs.com/cli/v11/commands/npm-publish/).
 
-```bash
-cd integrations/mcp-server && npm ci && npm test && npm pack --dry-run
+## Publish the inspected tarball
+
+Use the established publisher authentication without printing or committing credentials. Publish the exact reviewed tarball, rather than the working directory. For a release whose version is `2.0.9`, the command is:
+
+```sh
+npm publish ./vedika-io-mcp-server-2.0.9.tgz --access public
 ```
 
-Expect: 24 passing tests, then a `2.0.4` tarball of **90 files** containing
-`dist/tools/vastu.js`, `README.md` and `package.json` and nothing else. A count
-of 2 means the build did not run.
+Replace the example version with the reviewed release version. Stop if authentication, approval or validation fails. Do not change package ownership or publish under a different name as a workaround.
 
-## Why `prepack` and `pretest` exist
+Read back the exact version:
 
-`dist/` is gitignored repo-wide (`.gitignore:23`, `**/dist/`), so a clean clone
-has no compiled output at all. `npm pack` does **not** run `prepublishOnly`, so
-before this change `npm pack` on a clean clone produced a 2-file tarball with no
-code in it, and in a working copy with a stale `dist/` it produced an 88-file
-tarball missing all seven Vastu tools. Either way the artifact you could inspect
-was not the artifact `npm publish` would upload, which makes pre-publish
-verification impossible. `prepack: npm run build` makes pack and publish produce
-the same bytes; `files: ["dist", "README.md"]` is an allowlist, so a new
-top-level file cannot ship by being forgotten.
+```sh
+npm view @vedika-io/mcp-server@2.0.9 version dist.integrity dist.tarball mcpName --json
+```
 
-## After publishing
+Compare `dist.integrity` with the SHA-512 integrity of the inspected tarball. Download the exact published version into a separate directory, inspect its package metadata and executable entry point, and repeat the isolated consumer checks. Verify the intended distribution tag separately; a package version existing does not prove that `latest` points to it.
 
-1. Confirm the registry moved: `npm view @vedika-io/mcp-server version` → `2.0.4`.
-2. Confirm the shipped bytes carry the fix, from a throwaway directory:
-   `npm pack @vedika-io/mcp-server@2.0.4 && tar xzf vedika-io-mcp-server-2.0.4.tgz`
-   then `grep -c PUBLIC_API_ORIGIN package/dist/client.js` → non-zero, and
-   `grep -c "redirect: 'manual'" package/dist/client.js` → 1.
-3. Recommended, founder's call, and a registry write that reaches every
-   installed user:
-   `npm deprecate @vedika-io/mcp-server@"<2.0.4" "Sends the API key to any VEDIKA_BASE_URL; upgrade to 2.0.4."`
-   Every published version leaks, not only `2.0.3`: the tarballs for `1.5.0`,
-   `1.6.0`, `2.0.0`, `2.0.1`, `2.0.2` and `2.0.3` were all fetched and read on
-   2026-09-07, and all six carry the same unvalidated `baseUrl` and no
-   `redirect` option, so `<2.0.4` is the right range. The registry counted
-   1,222 downloads in the year to 2026-09-06 (downloads, not installs — that
-   number includes mirrors and CI) spread across all six. Deprecation is the
-   only channel that reaches an existing install. Nothing in this repository can
-   revoke a key that already left a machine.
-4. Update the incident record's `Live remediation` field and its `INDEX.csv` row
-   from `not deployed` to `deployed`.
+The [npm pack documentation](https://docs.npmjs.com/cli/v11/commands/npm-pack/) describes package inspection and tarball output.
 
-## What is not automated, on purpose
+## Publish MCP discovery metadata
 
-No CI workflow publishes this package — `.github/` holds only `dependabot.yml`.
-Merging the release-prep PR ships nothing. That is intentional: publishing
-reaches an audience.
+The intended registry name is `io.github.vedika-io/vedika-mcp-server`. Publish metadata only after npm readback proves the matching package version and `mcpName`. Validate the descriptor against the current official server schema, publish through the official publisher or documented registry API, then read back the exact name and version from the registry.
 
-## Known metadata disagreement (not changed here)
+Organization namespace authentication needs proof of organization ownership. The current interactive device login does not grant organization publishing; use a supported authentication method that proves the required role. Do not expose a token in command arguments or logs, substitute a personal namespace, or create credentials to bypass a refusal. Follow the current [official authentication guidance](https://github.com/modelcontextprotocol/registry/blob/main/docs/modelcontextprotocol-io/authentication.mdx).
 
-`package.json` `repository.url` names `github.com/vedika-io/vedika-mcp-server`,
-a separate repository from this monorepo. That repository is **public**, not
-archived, and was last pushed 2026-05-29; its `main` still carries the
-vulnerable `src/client.ts` (`this.baseUrl = (process.env['VEDIKA_BASE_URL'] ||
-'https://api.vedika.io').replace(/\/$/, '')`, no origin check, no `redirect`
-option). Publishing from this monorepo also stamps a `gitHead` that does not
-exist there. Both are founder decisions — retire, archive, or resync that
-repository, and decide whether `repository.url` should follow — so nothing here
-touches it. It does not block the publish.
+The descriptor must identify the exact npm package/version and standard input/output transport, and declare the production API key as a secret environment input without embedding a value. The name must match package `mcpName`; see [package ownership verification](https://github.com/modelcontextprotocol/registry/blob/main/docs/modelcontextprotocol-io/package-types.mdx).
+
+A successful npm upload does not prove an MCP listing. Follow the [official registry publishing procedure](https://github.com/modelcontextprotocol/registry/blob/main/docs/modelcontextprotocol-io/quickstart.mdx) and verify the returned listing independently.
+
+## If a release needs correction
+
+Preserve published versions and their evidence. Publish corrected code under a new version. Moving a distribution tag to a previously verified version is a separate maintainer action; read the tag back afterward. Updating a tag does not change clients already pinned to another version. Do not unpublish or deprecate versions automatically.

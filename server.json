@@ -1,0 +1,29 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.vedika-io/vedika-mcp-server",
+  "title": "Vedika Astrology and Vastu",
+  "description": "Tools for Vedika astrology calculations, conversational readings and Vastu APIs.",
+  "repository": {
+    "url": "https://github.com/vedika-io/vedika-mcp-server",
+    "source": "github"
+  },
+  "version": "2.0.9",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@vedika-io/mcp-server",
+      "version": "2.0.9",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "VEDIKA_API_KEY",
+          "description": "Your Vedika production API key. Authenticated requests use your account billing terms.",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}
