@@ -59,7 +59,8 @@ test('AI discovery copy states conditional coverage and directs users to current
   const toolRow = readme.split('\n').find(line => line.startsWith('| `vedika_ai_chat` |'));
   assert.ok(toolRow);
   assert.equal(unsupported.test(toolRow), false);
-  assert.ok(source.includes('https://vedika.io/pricing'));
-  assert.ok(toolRow.includes('https://vedika.io/pricing'));
+  const pricingUrl = /https:\/\/vedika\.io\/pricing/;
+  assert.match(source, pricingUrl);
+  assert.match(toolRow, pricingUrl);
   assert.equal(unsupported.test('precision-validated chart computation (30 languages)'), true);
 });
